@@ -1,0 +1,108 @@
+@font-face {
+	font-family: 'menlo';
+	src: url('./media/Menlo-Regular-01.ttf');
+}
+
+
+@font-face {
+	font-family: 'magicmedieval';
+	src: url('./media/Magicmedieval-pRV1.ttf');
+}
+
+body {
+	background-color: antiquewhite;
+	color: #4a1e06;
+	font-family: 'menlo';
+}
+
+
+h1 {
+	text-align: center;
+	font-family: 'magicmedieval';
+	font-size: 60px;
+	margin-top: 24px;
+	margin-bottom: 18px;
+	height: 6vh;
+}
+
+
+#flexContainer1 {
+	width: 100%;
+	/* height: 850px; */
+	height: 87vh;
+
+	display: flex;
+}
+
+#flexContainer2 {
+	flex-direction: column;
+	display: flex;
+}
+
+#flexContainer2 >div {
+	margin: 10px;
+}
+
+#gameMap {
+	background-color: black;
+	width: 1200px;
+	height: 720px;
+}
+
+#mapInfo {
+	flex-grow: 1;
+	border: 2px solid;
+	border-radius: 6px;
+	padding: 5px;
+}
+
+#playerStats {
+	flex-grow: 1;
+	margin: 10px;
+	border: 2px solid;
+	border-radius: 6px;
+	padding: 5px;
+
+	font-size: larger;
+}
+
+#statPortrait {
+	display: block;
+	width: 120px;
+	height: 180px;
+	border-radius: 4px;
+	margin: 5px auto;
+}
+
+#statName {
+	font-size: x-large;
+	font-weight: 600;
+	color: black;
+	width: 100%;
+	text-align: center;
+	margin: 5px auto;
+}
+
+#statHp {
+	color: green;
+}
+
+#statMana {
+	color: blue;
+}
+
+.condition {
+	color: purple;
+}
+
+#gameMessages {
+	flex-grow: 1;
+	margin: 10px;
+	border: 2px solid;
+	border-radius: 6px;
+	padding: 5px;
+}
+
+.message {
+	color: slategray;
+}
