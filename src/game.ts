@@ -2,7 +2,7 @@ import * as ROT from "rot-js"
 
 import { mapWidth, mapHeight } from "./layout"
 import { Actor, Player } from "./entities"
-import { Action, MovementAction, WaitAction } from "./actions"
+import { Action, BumpAction, WaitAction } from "./actions"
 import { makeMonster, MonsterTypes } from "./monsters"
 import { GameMap } from "./map"
 import { MessageLog } from "./messageLog"
@@ -33,7 +33,7 @@ export class Game {
 		this.map.place(this.player, 10, 10)
 
 		//DEBUG: add a single monster
-		let monster = makeMonster(MonsterTypes.Orc)
+		let monster = makeMonster(MonsterTypes.Orc, this)
 		this.addActor(monster)
 		this.map.place(monster, 20, 10)
 		//
@@ -67,7 +67,7 @@ export class Game {
 		if (MOVE_KEYS.has(keyCode)) {
 			let move = MOVE_KEYS.get(keyCode)
 
-			newAction = new MovementAction(this, this.player, move[0], move[1])
+			newAction = new BumpAction(this, this.player, move[0], move[1])
 
 		} else if (keyCode in WAIT_KEYS) {
 			newAction = new WaitAction(this, this.player)

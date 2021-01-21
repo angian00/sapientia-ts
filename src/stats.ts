@@ -52,14 +52,14 @@ export class Stats {
 
 	die(): void {
 		let deathMessage: string
-		let deathMessageColor: String
+		let deathMessageClass: string
 
 		if (this.game.player == this.parent) {
 			deathMessage = "You died!"
-			deathMessageColor = colors.playerDeath
+			deathMessageClass = "player-death"
 		} else {
-			deathMessage = `{this.parent.name} is dead!`
-			deathMessageColor = colors.enemyDeath
+			deathMessage = `${this.parent.name} is dead!`
+			deathMessageClass = "enemy-death"
 		}
 
 		this.parent.char = "%"
@@ -69,7 +69,7 @@ export class Stats {
 		this.parent.name = `remains of ${this.parent.name}`
 		//this.parent.renderOrder = RenderOrder.CORPSE
 
-		//this.game.messageLog.addMessage(deathMessage, deathMessageColor)
+		this.game.messageLog.addMessage(deathMessage, deathMessageClass)
 
 		//this.game.player.level.add_xp(this.parent.level.xp_given)
 	}

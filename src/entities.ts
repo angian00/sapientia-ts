@@ -43,10 +43,15 @@ export class Actor extends Entity {
 export class Player extends Actor {
 	game: Game
 
+	//TODO: uniform with monsters (move act() logic to PlayerAI)
 	constructor(game: Game) {
 		super("player", "@", "blue")
 
 		this.game = game
+
+		this.stats = new Stats(30, 2, 5)
+		this.stats.parent = this
+		this.stats.game = game
 	}
 
 	async act() {

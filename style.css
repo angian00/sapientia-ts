@@ -108,6 +108,24 @@ h1 {
 	color: slategray;
 }
 
-#gameMessages >div.warning {
+.warning {
 	color: darkorange;
+}
+
+#gameMessages >div.player-attack {
+	color: blue;
+}
+#gameMessages >div.player-death {
+	color: purple;
+	font-weight: bold;
+}
+
+
+#gameMessages >div.enemy-attack {
+	color: red;
+}
+
+#gameMessages >div.enemy-death {
+	color: black;
+	font-weight: bold;
 }

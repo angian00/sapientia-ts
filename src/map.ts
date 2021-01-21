@@ -2,7 +2,7 @@ import * as ROT from "rot-js"
 
 import { mapWidth, mapHeight } from "./layout"
 import * as tiles from "./tiles"
-import { Entity } from "./entities"
+import { Entity, Actor } from "./entities"
 
 
 export class GameMap {
@@ -25,6 +25,16 @@ export class GameMap {
 
 	inBounds(x: number, y: number): boolean {
 		return (0 <= x && x < this.width && 0 <= y && x < this.height)
+	}
+
+
+	getActor(x: number, y: number): Actor {
+		for (let e of this.entities) {
+			if (e.x == x && e.y == y && (e instanceof Actor))
+				return e
+		}
+
+		return null
 	}
 
 	getBlockingEntity(x: number, y: number): Entity {
