@@ -104,6 +104,10 @@ h1 {
 	padding: 5px;
 }
 
-.message {
+#gameMessages >div {
 	color: slategray;
+}
+
+#gameMessages >div.warning {
+	color: darkorange;
 }

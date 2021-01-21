@@ -1,66 +1,24 @@
 import * as ROT from "rot-js"
 
-import { mapWidth, mapHeight } from "./constants"
-import { Tile } from "./tile"
+import { mapWidth, mapHeight } from "./layout"
+import { Actor, Player } from "./entities"
 import { Action, MovementAction, WaitAction } from "./actions"
+import { makeMonster, MonsterTypes } from "./monsters"
+import { GameMap } from "./map"
+import { MessageLog } from "./messageLog"
 import { BlockingQueue } from "./util"
 import { DisplayView } from "./view"
 
 
-export class Entity {
-	readonly name: string
-	readonly char: string
-	readonly color: string
-	x: number
-	y: number
-
-	constructor(name: string, char = "?", color = "darkgrey") {
-		this.name = name
-		this.char = char
-		this.color = color
-		this.x = 0
-		this.y = 0
-	}
-
-	move(dx: number, dy: number) {
-		this.x += dx
-		this.y += dy
-	}
-}
-
-
-export class Actor extends Entity {
-	async act() {
-		//do nothing
-	}
-}
-
-class Player extends Actor {
-	game: Game
-
-	constructor(game: Game) {
-		super("Player", "@", "blue")
-
-		this.game = game
-	}
-
-	async act() {
-		let a = await this.game.playerActionQueue.dequeue()
-
-		a.perform()
-	}
-}
-
-
-
-
 export class Game {
-	map = new GameMap()
+	map = new GameMap(mapWidth, mapHeight)
 	actors: Actor[] = []
-	player = new Player(this)
+	player: Player
+	messageLog = new MessageLog()
 	scheduler = new ROT.Scheduler.Simple()
 	playerActionQueue = new BlockingQueue<Action>()
-	view = new DisplayView(this)
+	
+	view = new DisplayView()
 
 
 	constructor() {
@@ -70,9 +28,20 @@ export class Game {
 		//document.body.addEventListener("keydown", this.handleKeyboardInput)
 		document.body.addEventListener("keydown", this.handleKeyboardInput.bind(this))
 
+		this.player = new Player(this)
 		this.addActor(this.player)
 		this.map.place(this.player, 10, 10)
-		this.view.render()
+
+		//DEBUG: add a single monster
+		let monster = makeMonster(MonsterTypes.Orc)
+		this.addActor(monster)
+		this.map.place(monster, 20, 10)
+		//
+
+		this.view.renderMap(this.map)
+
+		this.messageLog.addMessage("Welcome, adventurer!")
+		this.view.renderMessages(this.messageLog)
 	}
 
 
@@ -85,64 +54,28 @@ export class Game {
 		console.log("processTurn")
 
 		let currActor = <Actor>this.scheduler.next()
-		await currActor.act();
+		let actionResult = await currActor.act();
 
-		this.view.render();
+		this.view.renderMap(this.map)
+		this.view.renderMessages(this.messageLog)
 	}
 
 	handleKeyboardInput(e: KeyboardEvent): void {
-
 		let newAction = null
 		let keyCode = e.code
 
 		if (MOVE_KEYS.has(keyCode)) {
 			let move = MOVE_KEYS.get(keyCode)
 
-			console.log("inside handleKeyboardInput")
-			console.log(this)
-			console.log(this.player)
-			newAction = new MovementAction(this.player, move[0], move[1])
+			newAction = new MovementAction(this, this.player, move[0], move[1])
 
 		} else if (keyCode in WAIT_KEYS) {
-			newAction = new WaitAction(this.player)
+			newAction = new WaitAction(this, this.player)
 		}
 
 		if (newAction)
 			this.playerActionQueue.enqueue(newAction)
 	}
-}
-
-export class GameMap {
-	tiles: Tile[][] = genMap()
-	actors: Set<Actor> = new Set()
-
-	place(a: Actor, x: number, y: number): void {
-		a.x = x
-		a.y = y
-
-		this.actors.add(a)
-	}
-}
-
-function genMap(): Tile[][] {
-	let map: Tile[][] = []
-
-	for (let x = 0; x < mapWidth; x++) {
-		map[x] = []
-		for (let y = 0; y < mapHeight; y++) {
-			//walls on the borders
-			if (x == 0 || x == mapWidth - 1 || y == 0 || y == mapHeight - 1)
-				map[x].push(Tile.Wall)
-			else
-				map[x].push(Tile.Floor)
-		}
-	}
-
-	return map
-}
-
-interface Dictionary<T> {
-	[Key: string]: T;
 }
 
 

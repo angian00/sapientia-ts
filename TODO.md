@@ -1,7 +1,14 @@
 # TODO
 
-- game loop e strutture dati base
+- enemies
+- base ai: pathfinding
+- combat
+- fov
 
-- cambiare colori mappa
+- inventory
+- inventory actions
+- decorated actions
+
+# Improvements
 - unificare variabili map size in ts e css
 

@@ -1,7 +1,7 @@
 {
 	"compilerOptions": {
 		"noImplicitAny": true,
-		"target": "ES5",
+		"target": "ES6",
 		"moduleResolution": "node",
 		"module": "ES2015",
 		"sourceMap": true
