@@ -19,6 +19,8 @@ export class DisplayView {
 	}
 
 	render(): void {
+		console.log("rendering view")
+
 		let tiles = this.game.map.tiles
 		let actorTiles = actors2tiles(this.game.map.actors)
 
@@ -47,7 +49,7 @@ export class DisplayView {
 					char = actor.char
 					fgColor = actor.color
 				}
-				
+
 				display.draw(x, y, char, fgColor, bgColor);
 			}
 		}
