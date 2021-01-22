@@ -11,7 +11,10 @@ export class Stats {
 	baseDef: number
 	baseAtt: number
 
-	constructor(hp: number, baseDef: number, baseAtt: number) {
+	constructor(game: Game, parent: Actor, hp: number, baseDef: number, baseAtt: number) {
+		this.game = game
+		this.parent = parent
+
 		this.maxHp = hp
 		this._hp = hp
 		this.baseDef = baseDef
@@ -66,7 +69,7 @@ export class Stats {
 		this.parent.color = colors.playerDeath
 		this.parent.isBlocking = false
 		this.parent.stats = null
-		//this.parent.ai = null
+		this.parent.ai = null
 		this.parent.name = `remains of ${this.parent.name}`
 		//this.parent.renderOrder = RenderOrder.CORPSE
 

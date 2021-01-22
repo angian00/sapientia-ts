@@ -1,9 +1,9 @@
 import * as ROT from "rot-js"
 
 import { mapWidth, mapHeight, lightRadius } from "./layout"
-import { Actor, Player } from "./entities"
+import { Actor } from "./entities"
 import { Action, BumpAction, WaitAction } from "./actions"
-import { makeMonster, MonsterTypes } from "./monsters"
+import { makeActor, ActorTypes } from "./actor_factory"
 import { GameMap } from "./map"
 import { MessageLog } from "./messageLog"
 import { BlockingQueue } from "./util"
@@ -13,7 +13,7 @@ import { DisplayView } from "./view"
 export class Game {
 	map = new GameMap(mapWidth, mapHeight)
 	actors: Actor[] = []
-	player: Player
+	player: Actor
 	messageLog = new MessageLog()
 	scheduler = new ROT.Scheduler.Simple()
 	playerActionQueue = new BlockingQueue<Action>()
@@ -28,12 +28,12 @@ export class Game {
 		//document.body.addEventListener("keydown", this.handleKeyboardInput)
 		document.body.addEventListener("keydown", this.handleKeyboardInput.bind(this))
 
-		this.player = new Player(this)
+		this.player = makeActor(this, ActorTypes.Player)
 		this.addActor(this.player)
 		this.map.place(this.player, 10, 10)
 
 		//DEBUG: add a single monster
-		let monster = makeMonster(MonsterTypes.Orc, this)
+		let monster = makeActor(this, ActorTypes.Orc)
 		this.addActor(monster)
 		this.map.place(monster, 20, 10)
 		//

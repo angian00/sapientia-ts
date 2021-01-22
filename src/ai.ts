@@ -9,7 +9,13 @@ export abstract class AI {
 	game: Game
 	parent: Actor
 
-	/** Compute and return a path to the target position.
+	constructor(game: Game, parent: Actor) {
+		this.game = game
+		this.parent = parent
+	}
+
+	/** 
+	 * Compute and return a path to the target position.
 	 * If there is no valid path then returns an empty list.
 	 */
 	getPathTo(destX: number, destY: number): [number, number][] {
@@ -46,14 +52,14 @@ export abstract class AI {
 		return outputPath
 	}
 
-	abstract chooseAction(): Action
+	abstract chooseAction(): Promise<Action>
 }
 
 
 export class EnemyAI extends AI {
 	path: [number, number][] = []
 
-	chooseAction(): Action {
+	async chooseAction(): Promise<Action> {
 		let target = this.game.player
 
 		let dx = target.x - this.parent.x
@@ -76,5 +82,12 @@ export class EnemyAI extends AI {
 		}
 
 		return new WaitAction(this.game, this.parent)
+	}
+}
+
+
+export class PlayerAI extends AI {
+	async chooseAction(): Promise<Action> {
+		return this.game.playerActionQueue.dequeue()
 	}
 }
