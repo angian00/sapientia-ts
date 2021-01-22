@@ -10,10 +10,32 @@ export class GameMap {
 	height: number
 	tiles: tiles.Terrain[][] = genMap()
 	entities: Set<Entity> = new Set()
+	visible: boolean[][]
+	explored: boolean[][]
 
 	constructor(width: number, height: number) {
 		this.width = width
 		this.height = height
+
+		this.visible = []
+		this.explored = []
+		for (let x = 0; x < width; x++) {
+			this.visible.push([])
+			this.explored.push([])
+			for (let y=0; y < height; y++) {
+				this.visible[x].push(false)
+				this.explored[x].push(false)
+			}
+		}
+	}
+
+	resetVisible(): void {
+		for (let x = 0; x < this.width; x++) {
+			for (let y = 0; y < this.height; y++) {
+				this.visible[x][y] = false
+			}
+		}
+
 	}
 
 	place(e: Entity, x: number, y: number): void {
@@ -24,13 +46,13 @@ export class GameMap {
 	}
 
 	inBounds(x: number, y: number): boolean {
-		return (0 <= x && x < this.width && 0 <= y && x < this.height)
+		return (0 <= x && x < this.width && 0 <= y && y < this.height)
 	}
 
 
 	getActor(x: number, y: number): Actor {
 		for (let e of this.entities) {
-			if (e.x == x && e.y == y && (e instanceof Actor))
+			if (e.x == x && e.y == y && (e instanceof Actor) && (e.stats))
 				return e
 		}
 

@@ -55,16 +55,17 @@ export class Stats {
 		let deathMessageClass: string
 
 		if (this.game.player == this.parent) {
-			deathMessage = "You died!"
+			deathMessage = "\u271F you died"
 			deathMessageClass = "player-death"
 		} else {
-			deathMessage = `${this.parent.name} is dead!`
+			deathMessage = `\u271F ${this.parent.name} is dead`
 			deathMessageClass = "enemy-death"
 		}
 
 		this.parent.char = "%"
 		this.parent.color = colors.playerDeath
 		this.parent.isBlocking = false
+		this.parent.stats = null
 		//this.parent.ai = null
 		this.parent.name = `remains of ${this.parent.name}`
 		//this.parent.renderOrder = RenderOrder.CORPSE

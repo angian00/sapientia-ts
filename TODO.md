@@ -1,14 +1,12 @@
 # TODO
 
-- enemies
 - base ai: pathfinding
-- combat
-- fov
 
 - inventory
 - inventory actions
 - decorated actions (area effects, etc.)
 
 # Improvements
+- rendering order
+- fix flex-shrink stats panel
 - unificare variabili map size in ts e css
-

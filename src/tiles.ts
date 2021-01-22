@@ -27,7 +27,7 @@ export class Terrain {
 	}
 }
 
-export const UnknownTile = new Tile("\u2591", "#909090", "black")
+export const UnexploredTile = new Tile("\u2591", "#909090", "black")
 
 export const Floor = new Terrain(true, true, 
 	new Tile(".", colors.black, colors.floorDark),

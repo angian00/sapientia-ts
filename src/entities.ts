@@ -57,6 +57,8 @@ export class Player extends Actor {
 	async act() {
 		while (true) {
 			let a = await this.game.playerActionQueue.dequeue()
+			console.log("Performing player action")
+			console.log(a)
 			let actionResult = a.perform()
 			if (actionResult.success) {
 				break

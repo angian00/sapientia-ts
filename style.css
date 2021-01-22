@@ -113,19 +113,19 @@ h1 {
 }
 
 #gameMessages >div.player-attack {
-	color: blue;
+	color: darkgreen;
 }
 #gameMessages >div.player-death {
-	color: purple;
+	color: darkred;
 	font-weight: bold;
 }
 
 
 #gameMessages >div.enemy-attack {
-	color: red;
+	color: darkred;
 }
 
 #gameMessages >div.enemy-death {
-	color: black;
+	color: darkgreen;
 	font-weight: bold;
 }

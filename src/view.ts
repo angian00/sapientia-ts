@@ -1,6 +1,7 @@
 import * as ROT from "rot-js"
 
 import { mapWidth, mapHeight } from "./layout"
+import { UnexploredTile } from "./tiles"
 import * as colors from "./colors"
 import { Entity } from "./entities"
 import { GameMap } from "./map"
@@ -24,13 +25,21 @@ export class DisplayView {
 
 		for (let x = 0; x < mapWidth; x++) {
 			for (let y = 0; y < mapHeight; y++) {
-				let currTile = map.tiles[x][y].lightTile
+				let currTile
+
+				if (map.visible[x][y])
+					currTile = map.tiles[x][y].lightTile
+				else if (map.explored[x][y])
+					currTile = map.tiles[x][y].darkTile
+				else
+					currTile = UnexploredTile
+
 				let char = currTile.char
 				let fgColor = currTile.fgColor
 				let bgColor = currTile.bgColor
 
 				let e = entityTiles[x][y]
-				if (e) {
+				if (map.visible[x][y] && e) {
 					char = e.char
 					fgColor = e.color
 				}
@@ -42,16 +51,12 @@ export class DisplayView {
 
 	renderMessages(messageLog: MessageLog): void {
 		console.log("rendering messages")
-
 		let container = document.getElementById("gameMessages")
-		console.log(container)
 
-		//FIXME: clears old message everytime
+		//FIXME: clears all old messages everytime
 		container.textContent = ''
 
 		for (let m of messageLog.messages.slice().reverse()) {
-			console.log(m)
-
 			let newDiv = document.createElement("div")
 			if (m.cssClass)
 				newDiv.classList.add(m.cssClass);

@@ -37,9 +37,6 @@ abstract class DirectionAction extends Action {
 		super(game, actor)
 		this.dx = dx
 		this.dy = dy
-
-		console.log("creating DirectionAction with actor")
-		console.log(this.actor)
 	}
 	
 	/** Returns this actions destination */
@@ -87,10 +84,10 @@ export class MeleeAction extends DirectionAction {
 			msgClass = "enemy-attack"
 
 		if (damage > 0) {
-			this.game.messageLog.addMessage(`${attackDesc} for ${damage} hit points`, msgClass)
+			this.game.messageLog.addMessage(`\u2694 ${attackDesc} for ${damage} hit points`, msgClass)
 			target.stats.hp -= damage
 		} else {
-			this.game.messageLog.addMessage(`${attackDesc} but does no damage`, msgClass)
+			this.game.messageLog.addMessage(`\u2694 ${attackDesc} but does no damage`, msgClass)
 		}
 		
 		return { success: true }

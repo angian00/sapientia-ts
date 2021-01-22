@@ -1,6 +1,6 @@
 import * as ROT from "rot-js"
 
-import { mapWidth, mapHeight } from "./layout"
+import { mapWidth, mapHeight, lightRadius } from "./layout"
 import { Actor, Player } from "./entities"
 import { Action, BumpAction, WaitAction } from "./actions"
 import { makeMonster, MonsterTypes } from "./monsters"
@@ -17,7 +17,8 @@ export class Game {
 	messageLog = new MessageLog()
 	scheduler = new ROT.Scheduler.Simple()
 	playerActionQueue = new BlockingQueue<Action>()
-	
+	fov = new ROT.FOV.PreciseShadowcasting(this.transparency.bind(this));
+
 	view = new DisplayView()
 
 
@@ -38,6 +39,8 @@ export class Game {
 		this.map.place(monster, 20, 10)
 		//
 
+		this.fov.compute(this.player.x, this.player.y, lightRadius, this.setFov.bind(this))
+
 		this.view.renderMap(this.map)
 
 		this.messageLog.addMessage("Welcome, adventurer!")
@@ -55,6 +58,9 @@ export class Game {
 
 		let currActor = <Actor>this.scheduler.next()
 		let actionResult = await currActor.act();
+
+		this.map.resetVisible()
+		this.fov.compute(this.player.x, this.player.y, lightRadius, this.setFov.bind(this))
 
 		this.view.renderMap(this.map)
 		this.view.renderMessages(this.messageLog)
@@ -75,6 +81,19 @@ export class Game {
 
 		if (newAction)
 			this.playerActionQueue.enqueue(newAction)
+	}
+
+	transparency(x: number, y: number) {
+		if (x < 0 || x >= this.map.width || y < 0 || y >= this.map.height)
+			return false
+		else
+			return this.map.tiles[x][y].transparent
+	}
+
+	setFov(x: number, y: number, r: number, visibility: number) {
+		this.map.visible[x][y] = !!visibility
+		if (this.map.visible[x][y])
+			this.map.explored[x][y] = true
 	}
 }
 
