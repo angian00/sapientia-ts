@@ -41,3 +41,8 @@ export class BlockingQueue<T> {
 		return this._promises.length - this._resolvers.length;
 	}
 }
+
+
+export function removeFromList<T>(items: T[], toRemove: T) {
+	return items.filter(x => (x !== toRemove))
+}

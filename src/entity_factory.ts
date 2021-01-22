@@ -1,7 +1,8 @@
 import { Game } from "./game"
-import { Actor } from "./entities"
+import { Actor, Item } from "./entities"
 import { Stats } from "./stats"
 import { PlayerAI, EnemyAI } from "./ai"
+import { Inventory } from "./inventory"
 
 
 export enum ActorTypes {
@@ -9,14 +10,21 @@ export enum ActorTypes {
 	Orc
 }
 
+export enum ItemTypes {
+	HealthPotion
+}
+
+
 export function makeActor(game: Game, actorType: ActorTypes): Actor {
 	let char: string
 	let color: string
 	let name: string
 
-	let hp
-	let baseDef
-	let baseAtt
+	let hp: number
+	let baseDef: number
+	let baseAtt: number
+
+	let inventorySize: number
 
 	switch (actorType) {
 		case ActorTypes.Player:
@@ -27,6 +35,8 @@ export function makeActor(game: Game, actorType: ActorTypes): Actor {
 			hp = 30
 			baseDef = 2
 			baseAtt = 5
+
+			inventorySize = 26
 
 			break
 
@@ -39,11 +49,16 @@ export function makeActor(game: Game, actorType: ActorTypes): Actor {
 			baseDef = 0
 			baseAtt = 3
 
+			inventorySize = 0
+
 			break
 	}
 
 	let actor = new Actor(game, name, char, color)
 	actor.stats = new Stats(game, actor, hp, baseDef, baseAtt)
+
+	if (inventorySize)
+		actor.inventory = new Inventory(game, actor, inventorySize)
 
 	if (actorType === ActorTypes.Player)
 		actor.ai = new PlayerAI(game, actor)
@@ -51,4 +66,24 @@ export function makeActor(game: Game, actorType: ActorTypes): Actor {
 		actor.ai = new EnemyAI(game, actor)
 
 	return actor
+}
+
+
+export function makeItem(game: Game, itemType: ItemTypes): Item {
+	let char: string
+	let color: string
+	let name: string
+
+	switch (itemType) {
+		case ItemTypes.HealthPotion:
+			char = "!"
+			color = "#8000FF"
+			name = "health potion"
+
+			break
+	}
+
+	let item = new Item(game, name, char, color)
+
+	return item
 }

@@ -1,5 +1,6 @@
-import { Actor } from "./entities"
-import { Game, } from "./game"
+import { Entity, Actor, Item } from "./entities"
+import { Game } from "./game"
+import { removeFromList } from "./util"
 
 
 export interface ActionResult {
@@ -106,5 +107,38 @@ export class MovementAction extends DirectionAction {
 
 		this.actor.move(this.dx, this.dy)
 		return { success: true }
+	}
+}
+
+
+/** Pickup an item and add it to the inventory, if there is room for it */
+export class PickupAction extends Action {
+	perform(): ActionResult {
+		let actorX = this.actor.x
+		let actorY = this.actor.y
+		let inventory = this.actor.inventory
+
+		for (let e of this.game.map.entities) {
+			if (!(e instanceof Item))
+				continue
+
+			let item = <Item>e
+			if (actorX != item.x || actorY != item.y)
+				continue
+
+			if (inventory.items.size >= inventory.capacity)
+				return { success: false, reason: "your inventory is full" }
+		
+			this.game.map.entities.delete(item)
+
+			item.parent = this.actor.inventory
+			inventory.items.add(item)
+
+			this.game.messageLog.addMessage(`you picked up the {item.name}`)
+			return { success: true }
+
+		}
+
+		return { success: false, reason: "There is nothing here to pick up" }
 	}
 }

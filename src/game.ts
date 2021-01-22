@@ -2,8 +2,8 @@ import * as ROT from "rot-js"
 
 import { mapWidth, mapHeight, lightRadius } from "./layout"
 import { Actor } from "./entities"
-import { Action, BumpAction, WaitAction } from "./actions"
-import { makeActor, ActorTypes } from "./actor_factory"
+import { Action, BumpAction, WaitAction, PickupAction } from "./actions"
+import { makeActor, ActorTypes, makeItem, ItemTypes, } from "./entity_factory"
 import { GameMap } from "./map"
 import { MessageLog } from "./messageLog"
 import { BlockingQueue } from "./util"
@@ -35,7 +35,12 @@ export class Game {
 		//DEBUG: add a single monster
 		let monster = makeActor(this, ActorTypes.Orc)
 		this.addActor(monster)
-		this.map.place(monster, 20, 10)
+		this.map.place(monster, 16, 12)
+		//
+
+		//DEBUG: add a single item
+		let item = makeItem(this, ItemTypes.HealthPotion)
+		this.map.place(item, 16, 8)
 		//
 
 		this.fov.compute(this.player.x, this.player.y, lightRadius, this.setFov.bind(this))
@@ -76,6 +81,16 @@ export class Game {
 
 		} else if (keyCode in WAIT_KEYS) {
 			newAction = new WaitAction(this, this.player)
+		
+		} else if (keyCode == "KeyG") {
+			newAction = new PickupAction(this, this.player)
+/*
+		} elif key == tcod.event.K_i {
+			return InventoryActivateHandler(self.engine)
+		} elif key == tcod.event.K_d {
+			return InventoryDropHandler(self.engine)
+		}
+*/
 		}
 
 		if (newAction)
