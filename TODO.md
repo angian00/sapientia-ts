@@ -1,7 +1,5 @@
 # TODO
 
-- base ai: pathfinding
-
 - inventory
 - inventory actions
 - decorated actions (area effects, etc.)

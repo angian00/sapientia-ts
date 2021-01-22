@@ -24,7 +24,7 @@ export class Stats {
 
 	set hp(newVal: number) {
 		this._hp = Math.max(0, Math.min(newVal, this.maxHp))
-		//if this._hp == 0 and this.parent.ai:
+		if (this._hp == 0 && this.parent.ai)
 			this.die()
 	}
 

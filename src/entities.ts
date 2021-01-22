@@ -1,6 +1,7 @@
 
 import { Game } from "./game"
 import { Stats } from "./stats"
+import { AI } from "./ai"
 
 
 export class Entity {
@@ -27,27 +28,37 @@ export class Entity {
 
 
 export class Actor extends Entity {
+	game: Game
 	stats?: Stats
+	ai?: AI
 	//inventory?: Inventory
-	//ai?: AI
 
-	constructor(name: string, char = "?", color = "black") {
+	constructor(game: Game, name: string, char = "?", color = "black") {
 		super(name, char, color, true)
+		this.game = game
 	}
 
 	async act() {
+		if (this.ai) {
+			let a = this.ai.chooseAction()
+			console.log("Performing monster action")
+			console.log(a)
+
+			let actionResult = a.perform()
+			if (!actionResult.success) {
+				this.game.messageLog.addMessage(actionResult.reason!, "warning")
+				this.game.view.renderMessages(this.game.messageLog)
+			}
+		}
 		//do nothing
 	}
 }
 
 export class Player extends Actor {
-	game: Game
 
 	//TODO: uniform with monsters (move act() logic to PlayerAI)
 	constructor(game: Game) {
-		super("player", "@", "blue")
-
-		this.game = game
+		super(game, "player", "@", "blue")
 
 		this.stats = new Stats(30, 2, 5)
 		this.stats.parent = this
@@ -57,8 +68,8 @@ export class Player extends Actor {
 	async act() {
 		while (true) {
 			let a = await this.game.playerActionQueue.dequeue()
-			console.log("Performing player action")
-			console.log(a)
+			//console.log("Performing player action")
+			//console.log(a)
 			let actionResult = a.perform()
 			if (actionResult.success) {
 				break

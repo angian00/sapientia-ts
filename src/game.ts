@@ -17,8 +17,7 @@ export class Game {
 	messageLog = new MessageLog()
 	scheduler = new ROT.Scheduler.Simple()
 	playerActionQueue = new BlockingQueue<Action>()
-	fov = new ROT.FOV.PreciseShadowcasting(this.transparency.bind(this));
-
+	fov = new ROT.FOV.PreciseShadowcasting(this.transparency.bind(this))
 	view = new DisplayView()
 
 
