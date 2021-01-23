@@ -134,11 +134,46 @@ export class PickupAction extends Action {
 			item.parent = this.actor.inventory
 			inventory.items.add(item)
 
-			this.game.messageLog.addMessage(`you picked up the {item.name}`)
+			this.game.messageLog.addMessage(`you picked up the ${item.name}`)
 			return { success: true }
 
 		}
 
 		return { success: false, reason: "There is nothing here to pick up" }
+	}
+}
+
+
+export abstract class ItemAction extends Action {
+	item: Item
+	targetXY: [number, number]
+
+	constructor(game: Game, actor: Actor, item: Item, targetXY?: [number, number]) {
+		super(game, actor)
+		this.item = item
+		if (targetXY)
+			this.targetXY = targetXY
+		else
+			this.targetXY = [actor.x, actor.y]
+	}
+
+	/** Return the actor at this actions destination */
+	get targetActor(): Actor {
+		return this.game.map.getActor(this.targetXY[0], this.targetXY[1])
+	}
+
+	abstract perform(): ActionResult
+}
+
+
+export class DropAction extends ItemAction {
+	perform(): ActionResult {
+		if (this.actor.inventory.items.has(this.item)) {
+			this.actor.inventory.drop(this.item)
+			return { success: true }
+
+		} else {
+			return { success: false, reason: "You don't have that item" }
+		}
 	}
 }

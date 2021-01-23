@@ -6,12 +6,15 @@ import * as colors from "./colors"
 import { Entity } from "./entities"
 import { GameMap } from "./map"
 import { MessageLog } from "./messageLog"
-
+import { Inventory } from "./inventory"
+import { Stats } from "./stats"
+import { Dictionary } from "./util"
+import { Item } from "./entities"
 
 let display: ROT.Display;
 
 
-export class DisplayView {
+export class GameView {
 
 	constructor() {
 		if (!display)
@@ -19,7 +22,7 @@ export class DisplayView {
 	}
 
 	renderMap(map: GameMap): void {
-		console.log("rendering map")
+		//console.log("rendering map")
 
 		let entityTiles = entities2tiles(map.entities)
 
@@ -50,7 +53,7 @@ export class DisplayView {
 	}
 
 	renderMessages(messageLog: MessageLog): void {
-		console.log("rendering messages")
+		//console.log("rendering messages")
 		let container = document.getElementById("gameMessages")
 
 		//FIXME: clears all old messages everytime
@@ -63,6 +66,15 @@ export class DisplayView {
 			newDiv.appendChild(document.createTextNode(m.fullText))
 			container.appendChild(newDiv)
 		}
+	}
+
+	renderStats(stats: Stats): void {
+		console.log("rendering stats")
+
+		let elem = document.getElementById("statHp")
+		elem.textContent = `hp: ${stats.hp} / ${stats.maxHp}`
+
+		//TODO: other stats
 	}
 }
 
@@ -100,4 +112,35 @@ function entities2tiles(entities: Set<Entity>): Entity[][] {
 	})
 
 	return res
+}
+
+
+export class InventoryView {
+	render(inventory: Inventory): Dictionary<Item> {
+		let itemMap: Dictionary<Item> = {}
+
+		let container = document.getElementById("inventoryContent")
+
+		if (inventory.items.size == 0) {
+			container.innerHTML = "&lt; empty &gt;"
+		
+		} else {
+			container.textContent = ""
+
+			let currLetter = "a"
+			let currAscii = currLetter.charCodeAt(0)
+			for (let item of inventory.items) {
+				itemMap[currLetter] = item
+
+				let newDiv = document.createElement("div")
+				newDiv.appendChild(document.createTextNode("(" + currLetter + ") " + item.name))
+				container.appendChild(newDiv)
+			
+				currLetter = String.fromCharCode(currAscii + 1);
+				currAscii = currLetter.charCodeAt(0)
+			}
+		}
+
+		return itemMap
+	}
 }

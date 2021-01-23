@@ -50,7 +50,7 @@ export class Actor extends Entity {
 				let actionResult = a.perform()
 				if (!actionResult.success) {
 					this.game.messageLog.addMessage(actionResult.reason!, "warning")
-					this.game.view.renderMessages(this.game.messageLog)
+					this.game.gameView.renderMessages(this.game.messageLog)
 				}
 
 				//only monsters waste a turn on failed actions

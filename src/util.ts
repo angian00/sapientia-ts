@@ -46,3 +46,9 @@ export class BlockingQueue<T> {
 export function removeFromList<T>(items: T[], toRemove: T) {
 	return items.filter(x => (x !== toRemove))
 }
+
+
+
+export class Dictionary<T> {
+	[Key: string]: T;
+}

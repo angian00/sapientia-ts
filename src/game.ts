@@ -7,7 +7,8 @@ import { makeActor, ActorTypes, makeItem, ItemTypes, } from "./entity_factory"
 import { GameMap } from "./map"
 import { MessageLog } from "./messageLog"
 import { BlockingQueue } from "./util"
-import { DisplayView } from "./view"
+import { InputHandler, GameInputHandler } from "./input_handlers"
+import { GameView, InventoryView } from "./views"
 
 
 export class Game {
@@ -18,15 +19,15 @@ export class Game {
 	scheduler = new ROT.Scheduler.Simple()
 	playerActionQueue = new BlockingQueue<Action>()
 	fov = new ROT.FOV.PreciseShadowcasting(this.transparency.bind(this))
-	view = new DisplayView()
+	gameView = new GameView()
+	inventoryView = new InventoryView()
+	currEventListener?: { (e: KeyboardEvent): void }
 
 
 	constructor() {
 		console.log("Game constructor")
 
-		//TODO: clean old event handlers
-		//document.body.addEventListener("keydown", this.handleKeyboardInput)
-		document.body.addEventListener("keydown", this.handleKeyboardInput.bind(this))
+		this.setInputHandler(new GameInputHandler(this))
 
 		this.player = makeActor(this, ActorTypes.Player)
 		this.addActor(this.player)
@@ -45,10 +46,11 @@ export class Game {
 
 		this.fov.compute(this.player.x, this.player.y, lightRadius, this.setFov.bind(this))
 
-		this.view.renderMap(this.map)
+		this.gameView.renderMap(this.map)
+		this.gameView.renderStats(this.player.stats)
 
 		this.messageLog.addMessage("Welcome, adventurer!")
-		this.view.renderMessages(this.messageLog)
+		this.gameView.renderMessages(this.messageLog)
 	}
 
 
@@ -66,35 +68,18 @@ export class Game {
 		this.map.resetVisible()
 		this.fov.compute(this.player.x, this.player.y, lightRadius, this.setFov.bind(this))
 
-		this.view.renderMap(this.map)
-		this.view.renderMessages(this.messageLog)
+		this.gameView.renderMap(this.map)
+		this.gameView.renderStats(this.player.stats)
+		this.gameView.renderMessages(this.messageLog)
 	}
 
-	handleKeyboardInput(e: KeyboardEvent): void {
-		let newAction = null
-		let keyCode = e.code
 
-		if (MOVE_KEYS.has(keyCode)) {
-			let move = MOVE_KEYS.get(keyCode)
+	setInputHandler(newInputHandler: InputHandler): void {
+		if (this.currEventListener)
+			document.body.removeEventListener("keydown", this.currEventListener)
 
-			newAction = new BumpAction(this, this.player, move[0], move[1])
-
-		} else if (keyCode in WAIT_KEYS) {
-			newAction = new WaitAction(this, this.player)
-		
-		} else if (keyCode == "KeyG") {
-			newAction = new PickupAction(this, this.player)
-/*
-		} elif key == tcod.event.K_i {
-			return InventoryActivateHandler(self.engine)
-		} elif key == tcod.event.K_d {
-			return InventoryDropHandler(self.engine)
-		}
-*/
-		}
-
-		if (newAction)
-			this.playerActionQueue.enqueue(newAction)
+		this.currEventListener = newInputHandler.eventListener
+		document.body.addEventListener("keydown", this.currEventListener)
 	}
 
 	transparency(x: number, y: number) {
@@ -109,48 +94,4 @@ export class Game {
 		if (this.map.visible[x][y])
 			this.map.explored[x][y] = true
 	}
-}
-
-
-let MOVE_KEYS = new Map<string, [number, number]>();
-// arrow keys
-MOVE_KEYS.set("ArrowUp", [0, -1])
-MOVE_KEYS.set("ArrowDown", [0, 1])
-MOVE_KEYS.set("ArrowLeft", [-1, 0])
-MOVE_KEYS.set("ArrowRight", [1, 0])
-MOVE_KEYS.set("Home", [-1, -1])
-MOVE_KEYS.set("End", [-1, 1])
-MOVE_KEYS.set("PageUp", [1, -1])
-MOVE_KEYS.set("PageDown", [1, 1])
-
-// numpad keys
-MOVE_KEYS.set("Numpad1", [-1, 1])
-MOVE_KEYS.set("Numpad2", [0, 1])
-MOVE_KEYS.set("Numpad3", [1, 1])
-MOVE_KEYS.set("Numpad4", [-1, 0])
-MOVE_KEYS.set("Numpad6", [1, 0])
-MOVE_KEYS.set("Numpad7", [-1, -1])
-MOVE_KEYS.set("Numpad8", [0, -1])
-MOVE_KEYS.set("Numpad9", [1, -1])
-
-// vi keys
-MOVE_KEYS.set("KeyH", [-1, 0])
-MOVE_KEYS.set("KeyJ", [0, 1])
-MOVE_KEYS.set("KeyK", [0, -1])
-MOVE_KEYS.set("KeyL", [1, 0])
-MOVE_KEYS.set("KeyY", [-1, -1])
-MOVE_KEYS.set("KeyU", [1, -1])
-MOVE_KEYS.set("KeyB", [-1, 1])
-MOVE_KEYS.set("KeyN", [1, 1])
-
-
-enum WAIT_KEYS {
-	"Period",
-	"Numpad5",
-	"Delete",
-}
-
-enum CONFIRM_KEYS {
-	"Enter",
-	"NumpadEnter",
 }

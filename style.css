@@ -1,17 +1,33 @@
+/* ---------------------------------------- */
+/* css variables                            */
+/* ---------------------------------------- */
+
+:root {
+  --default-light-color: antiquewhite;
+  --default-dark-color: #4a1e06;
+}
+
+/* ---------------------------------------- */
+/* custom fonts                             */
+/* ---------------------------------------- */
+
 @font-face {
 	font-family: 'menlo';
 	src: url('./media/Menlo-Regular-01.ttf');
 }
-
 
 @font-face {
 	font-family: 'magicmedieval';
 	src: url('./media/Magicmedieval-pRV1.ttf');
 }
 
+
+/* ---------------------------------------- */
+/* main formatting                          */
+/* ---------------------------------------- */
 body {
-	background-color: antiquewhite;
-	color: #4a1e06;
+	background-color: var(--default-light-color);
+	color: var(--default-dark-color);
 	font-family: 'menlo';
 }
 
@@ -25,6 +41,13 @@ h1 {
 	height: 6vh;
 }
 
+h2 {
+	text-align: center;
+	font-family: 'magicmedieval';
+	font-size: 40px;
+	margin-top: 12px;
+	margin-bottom: 9px;
+}
 
 #flexContainer1 {
 	width: 100%;
@@ -93,7 +116,7 @@ h1 {
 
 .condition {
 	background-color: purple;
-	color: antiquewhite;
+	color: var(--default-light-color);
 }
 
 #gameMessages {
@@ -128,4 +151,39 @@ h1 {
 #gameMessages >div.enemy-death {
 	color: darkgreen;
 	font-weight: bold;
+}
+
+
+/* ---------------------------------------- */
+/* popup dialogs                            */
+/* ---------------------------------------- */
+
+#dialogContainer {
+	display: none;
+	position: fixed;
+	z-index: 1;
+	padding-top: 100px;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: black;	
+}
+
+#dialogContainer >div {
+	display: none;
+	position: relative;
+	background-color: var(--default-light-color);
+	margin: auto;
+	padding: 5px;
+	width: 90%;
+	height: 80%;
+	max-width: 1200px;
+	border-radius: 6px;
+}
+
+#dialogContainer hr {
+	border-top: 2px solid var(--default-dark-color);
+	width: 90%;
 }

@@ -1,7 +1,6 @@
 # TODO
 
-- inventory
-- inventory actions
+- use item
 - decorated actions (area effects, etc.)
 
 # Improvements
@@ -9,3 +8,5 @@
 - fix flex-shrink stats panel
 - eliminare feedback azioni se actor non visible
 - unificare variabili map size in ts e css
+- stackable inventory items
+- rendere corpses items
