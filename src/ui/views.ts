@@ -133,9 +133,13 @@ export class InventoryView {
 				itemMap[currLetter] = item
 
 				let newDiv = document.createElement("div")
-				newDiv.appendChild(document.createTextNode("(" + currLetter + ") " + item.name))
+				newDiv.innerHTML = `<div class="inventory-row">` +
+						`<div class="inventory-item-letter">(${currLetter})</div>` +
+						`<div class="inventory-item-name">${item.name}</div>` +
+						`<div class="inventory-item-command">(d)rop / (u)se</div>` +
+					`</div>`
 				container.appendChild(newDiv)
-			
+					
 				currLetter = String.fromCharCode(currAscii + 1);
 				currAscii = currLetter.charCodeAt(0)
 			}

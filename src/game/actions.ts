@@ -128,14 +128,14 @@ export class PickupAction extends Action {
 				continue
 
 			if (inventory.items.size >= inventory.capacity)
-				return { success: false, reason: "your inventory is full" }
+				return { success: false, reason: `${this.actor.name} inventory is full` }
 		
 			this.engine.map.entities.delete(item)
 
 			item.parent = this.actor.inventory
 			inventory.items.add(item)
 
-			this.engine.messageLog.addMessage(`you picked up the ${item.name}`)
+			this.engine.messageLog.addMessage(`${this.actor.name} picks up the ${item.name}`)
 			return { success: true }
 
 		}

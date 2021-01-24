@@ -57,6 +57,14 @@ export class GameInputHandler extends InputHandler {
 
 export class InventoryInputHandler extends InputHandler {
 	itemMap: Dictionary<Item>
+	selectedItemKey?: string
+
+	get selectedItem(): Item {
+		if (this.selectedItemKey)
+			return this.itemMap[this.selectedItemKey]
+		else
+			return null
+	}
 
 	constructor(engine: Engine, itemMap: Dictionary<Item>) {
 		super(engine)
@@ -72,11 +80,48 @@ export class InventoryInputHandler extends InputHandler {
 		if (keyCode == "Escape") {
 			this.backToGame()
 
-		} else if (e.key in this.itemMap) {
-			let newAction = new UseAction(engine, engine.player, this.itemMap[e.key])
-			engine.playerActionQueue.enqueue(newAction)
+		} else if (!this.selectedItemKey) {
+			console.log("setting selected key:" + e.key)
+			if (e.key in this.itemMap) {
+				this.selectedItemKey = e.key
+				this.setSelectedRow()
+			}
+		} else {
+			let newAction;
 
-			this.backToGame()
+			if (keyCode == "KeyD") {
+				newAction = new DropAction(engine, engine.player, this.selectedItem)
+			} else if(keyCode == "KeyU") {
+				newAction = new UseAction(engine, engine.player, this.selectedItem)
+			}
+
+			if (newAction) {
+				//reset status
+				this.selectedItemKey = null
+				this.setSelectedRow()
+
+				engine.playerActionQueue.enqueue(newAction)
+				this.backToGame()
+			}
+		}
+	}
+
+	setSelectedRow(): void {
+		console.log("setSelectedRow")
+
+		let rows = document.querySelectorAll(".inventory-row")
+		for (let row of rows) {
+			console.log(row.querySelector(".inventory-item-letter").textContent)
+			console.log(this.selectedItemKey)
+
+			if (this.selectedItem && 
+				row.querySelector(".inventory-item-letter").textContent == "(" + this.selectedItemKey + ")") {
+				row.classList.add("selected")
+
+			} else {
+				row.classList.remove("selected")
+				row.querySelector(".inventory-item-command").textContent = ""
+			}
 		}
 	}
 

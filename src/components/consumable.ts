@@ -1,9 +1,8 @@
 import { Engine } from "../game/engine"
 import { Item, Actor } from "../game/entities"
-import { Action, ItemAction, ActionResult } from "../game/actions"
+import { ItemAction, ActionResult } from "../game/actions"
 import { GameMap } from "../game/map"
 import { Inventory } from "./inventory"
-import * as colors from "../ui/colors"
 
 
 export abstract class Consumable {
@@ -13,11 +12,6 @@ export abstract class Consumable {
 	constructor(engine: Engine, parent: Item) {
 		this.engine = engine
 		this.parent = parent
-	}
-
-	/** Try to return the action for this item */
-	getAction(consumer: Actor): Action {
-		return new ItemAction(this.engine, consumer, this.parent)
 	}
 
 	/** 
@@ -53,8 +47,8 @@ export class HealingConsumable extends Consumable {
 
 		if (amountHealed) {
 			this.engine.messageLog.addMessage(
-				`${consumer.name} consumes the ${self.parent.name}, and recovers ${amountHealed} hp`,
-				colors.healthRecovered)
+				`\u2600 ${consumer.name} consumes the ${this.parent.name}, and recovers ${amountHealed} hp`,
+				"player-heal")
 
 			this.consume()
 			return { success: true }

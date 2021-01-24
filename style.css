@@ -141,6 +141,11 @@ h2 {
 #gameMessages >div.player-death {
 	color: darkred;
 	font-weight: bold;
+	text-decoration: underline;
+}
+
+#gameMessages >div.player-heal {
+	color: green;
 }
 
 
@@ -151,6 +156,7 @@ h2 {
 #gameMessages >div.enemy-death {
 	color: darkgreen;
 	font-weight: bold;
+	text-decoration: underline;
 }
 
 
@@ -176,7 +182,7 @@ h2 {
 	position: relative;
 	background-color: var(--default-light-color);
 	margin: auto;
-	padding: 5px;
+	padding: 5px 40px;
 	width: 90%;
 	height: 80%;
 	max-width: 1200px;
@@ -186,4 +192,32 @@ h2 {
 #dialogContainer hr {
 	border-top: 2px solid var(--default-dark-color);
 	width: 90%;
+}
+
+
+.inventory-item-name {
+	margin-left: 10px;
+	margin-right: 10px;
+	text-align: left;
+	flex-grow: 99;
+}
+
+.inventory-row {
+	padding: 5px;
+	display: flex;
+	flex-direction: row;
+	justify-content: space-between;
+}
+
+.inventory-row.selected {
+	border: 1px solid var(--default-dark-color)
+}
+
+.inventory-row.selected :first-child {
+	font-style: italic;
+	opacity: 50%;
+}
+
+.inventory-row:not(.selected) :last-child {
+	display: none;
 }
