@@ -1,6 +1,6 @@
 import * as ROT from "rot-js"
 
-import { mapWidth, mapHeight } from "./layout"
+import { mapWidth, mapHeight } from "../layout"
 import * as tiles from "./tiles"
 import { Entity, Actor } from "./entities"
 

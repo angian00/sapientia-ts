@@ -1,9 +1,17 @@
 
-import { Game } from "./game"
+import { Engine } from "./engine"
 import { GameMap } from "./map"
-import { Stats } from "./stats"
-import { Inventory } from "./inventory"
-import { AI, PlayerAI } from "./ai"
+import { Stats } from "../components/stats"
+import { Inventory } from "../components/inventory"
+import { AI, PlayerAI } from "../components/ai"
+
+
+export enum RenderOrder {
+	Site,
+	Corpse,
+	Item,
+	Actor
+}
 
 
 export class Entity {
@@ -13,11 +21,15 @@ export class Entity {
 	isBlocking: boolean
 	x: number
 	y: number
+	renderOrder: RenderOrder
 
-	constructor(name: string, char = "?", color = "darkgrey", isBlocking = false) {
+
+	constructor(name: string, char = "?", color = "darkgrey", isBlocking = false, renderOrder = RenderOrder.Item) {
 		this.name = name
 		this.char = char
 		this.color = color
+		this.isBlocking = isBlocking
+		this.renderOrder = renderOrder
 		this.x = 0
 		this.y = 0
 	}
@@ -30,13 +42,13 @@ export class Entity {
 
 
 export class Actor extends Entity {
-	game: Game
+	game: Engine
 	stats?: Stats
 	inventory?: Inventory
 	ai?: AI
 
-	constructor(game: Game, name: string, char = "?", color = "black") {
-		super(name, char, color, true)
+	constructor(game: Engine, name: string, char = "?", color = "black") {
+		super(name, char, color, true, RenderOrder.Actor)
 		this.game = game
 	}
 
@@ -64,14 +76,18 @@ export class Actor extends Entity {
 
 
 export class Item extends Entity {
-	game: Game
+	game: Engine
 	parent?: Inventory | GameMap
 	//consumable?: Consumable
 	//equippable?: Equippable
 	//combinable?: Combinable
 
-	constructor(game: Game, name: string, char = "?", color = "black") {
-		super(name, char, color, true)
+	constructor(game: Engine, name: string, char = "?", color = "black") {
+		super(name, char, color, false, RenderOrder.Item)
 		this.game = game
+	}
+
+	use(): void {
+
 	}
 }

@@ -1,9 +1,9 @@
 
-import { Game } from "./game"
+import { Engine } from "./game/engine"
 
 
 async function gameLoop() {
-	let g = new Game()
+	let g = new Engine()
 	
 	while (true) {
 		await g.processTurn();

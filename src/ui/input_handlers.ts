@@ -1,15 +1,15 @@
 
-import { Action, BumpAction, WaitAction, PickupAction, DropAction } from "./actions"
-import { Game } from "./game"
-import { Dictionary } from "./util"
-import { Item } from "./entities"
+import { Action, BumpAction, WaitAction, PickupAction, DropAction } from "../game/actions"
+import { Engine } from "../game/engine"
+import { Dictionary } from "../util"
+import { Item } from "../game/entities"
 
 
 export abstract class InputHandler {
-	game: Game
+	game: Engine
 	eventListener: { (e: KeyboardEvent): void }
 
-	constructor(game: Game) {
+	constructor(game: Engine) {
 		this.game = game
 		this.eventListener = this.handleEvent.bind(this)
 	}
@@ -20,7 +20,6 @@ export abstract class InputHandler {
 
 export class GameInputHandler extends InputHandler {
 	handleEvent(e: KeyboardEvent): void {
-		console.log(this)
 		let game = this.game
 
 		let newAction = null
@@ -59,7 +58,7 @@ export class GameInputHandler extends InputHandler {
 export class InventoryInputHandler extends InputHandler {
 	itemMap: Dictionary<Item>
 
-	constructor(game: Game, itemMap: Dictionary<Item>) {
+	constructor(game: Engine, itemMap: Dictionary<Item>) {
 		super(game)
 
 		this.itemMap = itemMap
@@ -79,8 +78,6 @@ export class InventoryInputHandler extends InputHandler {
 
 			this.backToGame()
 		}
-
-		
 	}
 
 	backToGame(): void {
@@ -89,6 +86,7 @@ export class InventoryInputHandler extends InputHandler {
 		game.setInputHandler(new GameInputHandler(game))
 
 		game.gameView.renderMap(game.map)
+		game.gameView.renderStats(game.player.stats)
 		game.gameView.renderMessages(game.messageLog)
 		document.getElementById("dialogContainer").style.display = "none";
 		document.getElementById("inventoryDialog").style.display = "none";

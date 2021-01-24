@@ -1,9 +1,9 @@
-import { Game } from "./game"
-import { Actor } from "./entities"
-import * as colors from "./colors"
+import { Engine } from "../game/engine"
+import { Actor, RenderOrder } from "../game/entities"
+import * as colors from "../ui/colors"
 
 export class Stats {
-	game: Game
+	game: Engine
 	parent: Actor
 
 	maxHp: number
@@ -11,7 +11,7 @@ export class Stats {
 	baseDef: number
 	baseAtt: number
 
-	constructor(game: Game, parent: Actor, hp: number, baseDef: number, baseAtt: number) {
+	constructor(game: Engine, parent: Actor, hp: number, baseDef: number, baseAtt: number) {
 		this.game = game
 		this.parent = parent
 
@@ -65,13 +65,13 @@ export class Stats {
 			deathMessageClass = "enemy-death"
 		}
 
+		this.parent.name = `remains of ${this.parent.name}`
 		this.parent.char = "%"
 		this.parent.color = colors.playerDeath
 		this.parent.isBlocking = false
+		this.parent.renderOrder = RenderOrder.Corpse
 		this.parent.stats = null
 		this.parent.ai = null
-		this.parent.name = `remains of ${this.parent.name}`
-		//this.parent.renderOrder = RenderOrder.CORPSE
 
 		this.game.messageLog.addMessage(deathMessage, deathMessageClass)
 

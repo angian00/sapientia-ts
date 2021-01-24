@@ -1,4 +1,4 @@
-import * as colors from "./colors"
+import * as colors from "../ui/colors"
 
 export class Message {
 	plainText: string

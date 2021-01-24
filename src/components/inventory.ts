@@ -1,15 +1,15 @@
-import { Game } from "./game"
-import { Actor, Item } from "./entities"
-import { removeFromList } from "./util"
+import { Engine } from "../game/engine"
+import { Actor, Item } from "../game/entities"
+import { removeFromList } from "../util"
 
 
 export class Inventory {
-	game: Game
+	game: Engine
 	parent: Actor
 	capacity: number
 	items = new Set<Item>()
 
-	constructor(game: Game, parent: Actor, capacity: number) {
+	constructor(game: Engine, parent: Actor, capacity: number) {
 		this.game = game
 		this.parent = parent
 		this.capacity = capacity

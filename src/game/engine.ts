@@ -1,17 +1,17 @@
 import * as ROT from "rot-js"
 
-import { mapWidth, mapHeight, lightRadius } from "./layout"
+import { mapWidth, mapHeight, lightRadius } from "../layout"
 import { Actor } from "./entities"
 import { Action, BumpAction, WaitAction, PickupAction } from "./actions"
 import { makeActor, ActorTypes, makeItem, ItemTypes, } from "./entity_factory"
 import { GameMap } from "./map"
 import { MessageLog } from "./messageLog"
-import { BlockingQueue } from "./util"
-import { InputHandler, GameInputHandler } from "./input_handlers"
-import { GameView, InventoryView } from "./views"
+import { BlockingQueue } from "../util"
+import { InputHandler, GameInputHandler } from "../ui/input_handlers"
+import { GameView, InventoryView } from "../ui/views"
 
 
-export class Game {
+export class Engine {
 	map = new GameMap(mapWidth, mapHeight)
 	actors: Actor[] = []
 	player: Actor
@@ -36,7 +36,7 @@ export class Game {
 		//DEBUG: add a single monster
 		let monster = makeActor(this, ActorTypes.Orc)
 		this.addActor(monster)
-		this.map.place(monster, 16, 12)
+		this.map.place(monster, 22, 12)
 		//
 
 		//DEBUG: add a single item

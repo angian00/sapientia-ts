@@ -1,8 +1,8 @@
-import { Game } from "./game"
+import { Engine } from "./engine"
 import { Actor, Item } from "./entities"
-import { Stats } from "./stats"
-import { PlayerAI, EnemyAI } from "./ai"
-import { Inventory } from "./inventory"
+import { Stats } from "../components/stats"
+import { PlayerAI, EnemyAI } from "../components/ai"
+import { Inventory } from "../components/inventory"
 
 
 export enum ActorTypes {
@@ -15,7 +15,7 @@ export enum ItemTypes {
 }
 
 
-export function makeActor(game: Game, actorType: ActorTypes): Actor {
+export function makeActor(game: Engine, actorType: ActorTypes): Actor {
 	let char: string
 	let color: string
 	let name: string
@@ -69,7 +69,7 @@ export function makeActor(game: Game, actorType: ActorTypes): Actor {
 }
 
 
-export function makeItem(game: Game, itemType: ItemTypes): Item {
+export function makeItem(game: Engine, itemType: ItemTypes): Item {
 	let char: string
 	let color: string
 	let name: string

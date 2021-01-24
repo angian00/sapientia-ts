@@ -1,6 +1,6 @@
 import { Entity, Actor, Item } from "./entities"
-import { Game } from "./game"
-import { removeFromList } from "./util"
+import { Engine } from "./engine"
+import { removeFromList } from "../util"
 
 
 export interface ActionResult {
@@ -10,9 +10,9 @@ export interface ActionResult {
 
 export abstract class Action {
 	actor: Actor
-	game: Game
+	game: Engine
 
-	constructor(game: Game, actor: Actor) {
+	constructor(game: Engine, actor: Actor) {
 		this.game = game
 		this.actor = actor
 	}
@@ -23,7 +23,8 @@ export abstract class Action {
 export class WaitAction extends Action {
 	perform(): ActionResult {
 		//do nothing, spend a turn
-		this.game.messageLog.addMessage(this.actor.name + " is waiting... ")
+		if (this.game.map.visible[this.actor.x][this.actor.x])
+			this.game.messageLog.addMessage(this.actor.name + " is waiting... ")
 
 		return { success: true }
 	}
@@ -34,7 +35,7 @@ abstract class DirectionAction extends Action {
 	dx: number
 	dy: number
 
-	constructor(game: Game, actor: Actor, dx: number, dy: number) {
+	constructor(game: Engine, actor: Actor, dx: number, dy: number) {
 		super(game, actor)
 		this.dx = dx
 		this.dy = dy
@@ -71,9 +72,9 @@ export class MeleeAction extends DirectionAction {
 		if (!target)
 			return { success: false, reason: "Nothing to attack" }
 
-		console.log("performing MeleeAction")
-		console.log(this.actor)
-		console.log(target)
+		//console.log("performing MeleeAction")
+		//console.log(this.actor.name)
+		//console.log(target.name)
 
 		let damage = this.actor.stats.att - target.stats.def
 		let attackDesc = `${this.actor.name} attacks ${target.name}`
@@ -148,7 +149,7 @@ export abstract class ItemAction extends Action {
 	item: Item
 	targetXY: [number, number]
 
-	constructor(game: Game, actor: Actor, item: Item, targetXY?: [number, number]) {
+	constructor(game: Engine, actor: Actor, item: Item, targetXY?: [number, number]) {
 		super(game, actor)
 		this.item = item
 		if (targetXY)

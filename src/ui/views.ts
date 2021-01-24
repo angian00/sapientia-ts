@@ -1,15 +1,15 @@
 import * as ROT from "rot-js"
 
-import { mapWidth, mapHeight } from "./layout"
-import { UnexploredTile } from "./tiles"
+import { mapWidth, mapHeight } from "../layout"
+import { UnexploredTile } from "../game/tiles"
 import * as colors from "./colors"
-import { Entity } from "./entities"
-import { GameMap } from "./map"
-import { MessageLog } from "./messageLog"
-import { Inventory } from "./inventory"
-import { Stats } from "./stats"
-import { Dictionary } from "./util"
-import { Item } from "./entities"
+import { Entity } from "../game/entities"
+import { GameMap } from "../game/map"
+import { MessageLog } from "../game/messageLog"
+import { Inventory } from "../components/inventory"
+import { Stats } from "../components/stats"
+import { Dictionary } from "../util"
+import { Item } from "../game/entities"
 
 let display: ROT.Display;
 
@@ -69,7 +69,7 @@ export class GameView {
 	}
 
 	renderStats(stats: Stats): void {
-		console.log("rendering stats")
+		//console.log("rendering stats")
 
 		let elem = document.getElementById("statHp")
 		elem.textContent = `hp: ${stats.hp} / ${stats.maxHp}`
@@ -106,9 +106,9 @@ function entities2tiles(entities: Set<Entity>): Entity[][] {
 		}
 	}
 
-	//TODO: use viewing order
-	entities.forEach((a, i) => {
-		res[a.x][a.y] = a
+	entities.forEach((e, i) => {
+		if ((!res[e.x][e.y]) || res[e.x][e.y].renderOrder < e.renderOrder)
+			res[e.x][e.y] = e
 	})
 
 	return res

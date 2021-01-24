@@ -1,15 +1,15 @@
 import { Path } from "rot-js"
 
-import { Game } from "./game"
-import { Actor } from "./entities"
-import { Action, MeleeAction, MovementAction, WaitAction } from "./actions"
+import { Engine } from "../game/engine"
+import { Actor } from "../game/entities"
+import { Action, MeleeAction, MovementAction, WaitAction } from "../game/actions"
 
 
 export abstract class AI {
-	game: Game
+	game: Engine
 	parent: Actor
 
-	constructor(game: Game, parent: Actor) {
+	constructor(game: Engine, parent: Actor) {
 		this.game = game
 		this.parent = parent
 	}
@@ -30,7 +30,7 @@ export abstract class AI {
 		}
 
 		for (let e of map.entities) {
-			if (e.isBlocking)
+			if (e.isBlocking && !(e === this.parent) && !(e.x == destX && e.y == destY))
 				walkables[e.x][e.y] = false
 		}
 
@@ -60,6 +60,7 @@ export class EnemyAI extends AI {
 	path: [number, number][] = []
 
 	async chooseAction(): Promise<Action> {
+		console.log("EnemyAI.chooseAction")
 		let target = this.game.player
 
 		let dx = target.x - this.parent.x
@@ -77,6 +78,8 @@ export class EnemyAI extends AI {
 
 		if (this.path.length) {
 			let [destX, destY] = this.path.shift()
+			console.log("EnemyAI chose MovementAction")
+
 			return new MovementAction(this.game, this.parent, 
 				destX - this.parent.x, destY - this.parent.y)
 		}
