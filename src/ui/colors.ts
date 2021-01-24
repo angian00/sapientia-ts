@@ -13,3 +13,5 @@ export const wallLight = black
 
 export const playerDeath = "#FF3030"
 export const enemyDeath = "#FFA030"
+
+export const healthRecovered = "green"

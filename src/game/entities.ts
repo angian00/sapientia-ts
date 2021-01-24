@@ -4,6 +4,7 @@ import { GameMap } from "./map"
 import { Stats } from "../components/stats"
 import { Inventory } from "../components/inventory"
 import { AI, PlayerAI } from "../components/ai"
+import { Consumable } from "../components/consumable"
 
 
 export enum RenderOrder {
@@ -42,14 +43,14 @@ export class Entity {
 
 
 export class Actor extends Entity {
-	game: Engine
+	engine: Engine
 	stats?: Stats
 	inventory?: Inventory
 	ai?: AI
 
-	constructor(game: Engine, name: string, char = "?", color = "black") {
+	constructor(engine: Engine, name: string, char = "?", color = "black") {
 		super(name, char, color, true, RenderOrder.Actor)
-		this.game = game
+		this.engine = engine
 	}
 
 	async act() {
@@ -61,8 +62,8 @@ export class Actor extends Entity {
 
 				let actionResult = a.perform()
 				if (!actionResult.success) {
-					this.game.messageLog.addMessage(actionResult.reason!, "warning")
-					this.game.gameView.renderMessages(this.game.messageLog)
+					this.engine.messageLog.addMessage(actionResult.reason!, "warning")
+					this.engine.gameView.renderMessages(this.engine.messageLog)
 				}
 
 				//only monsters waste a turn on failed actions
@@ -76,15 +77,15 @@ export class Actor extends Entity {
 
 
 export class Item extends Entity {
-	game: Engine
+	engine: Engine
 	parent?: Inventory | GameMap
-	//consumable?: Consumable
+	consumable?: Consumable
 	//equippable?: Equippable
 	//combinable?: Combinable
 
 	constructor(game: Engine, name: string, char = "?", color = "black") {
 		super(name, char, color, false, RenderOrder.Item)
-		this.game = game
+		this.engine = game
 	}
 
 	use(): void {

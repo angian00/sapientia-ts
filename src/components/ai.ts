@@ -6,11 +6,11 @@ import { Action, MeleeAction, MovementAction, WaitAction } from "../game/actions
 
 
 export abstract class AI {
-	game: Engine
+	engine: Engine
 	parent: Actor
 
-	constructor(game: Engine, parent: Actor) {
-		this.game = game
+	constructor(engine: Engine, parent: Actor) {
+		this.engine = engine
 		this.parent = parent
 	}
 
@@ -19,7 +19,7 @@ export abstract class AI {
 	 * If there is no valid path then returns an empty list.
 	 */
 	getPathTo(destX: number, destY: number): [number, number][] {
-		let map = this.game.map
+		let map = this.engine.map
 		let walkables: boolean[][] = []
 
 		for (let x=0; x < map.width; x++) {
@@ -61,17 +61,17 @@ export class EnemyAI extends AI {
 
 	async chooseAction(): Promise<Action> {
 		console.log("EnemyAI.chooseAction")
-		let target = this.game.player
+		let target = this.engine.player
 
 		let dx = target.x - this.parent.x
 		let dy = target.y - this.parent.y
 		let distance = Math.max(Math.abs(dx), Math.abs(dy))
 
-		if (this.game.map.visible[this.parent.x][this.parent.y]) {
+		if (this.engine.map.visible[this.parent.x][this.parent.y]) {
 			//if monster is visible to player, 
 			//then player is visible to monster
 			if (distance <= 1)
-				return new MeleeAction(this.game, this.parent, dx, dy)
+				return new MeleeAction(this.engine, this.parent, dx, dy)
 
 			this.path = this.getPathTo(target.x, target.y)
 		}
@@ -80,17 +80,17 @@ export class EnemyAI extends AI {
 			let [destX, destY] = this.path.shift()
 			console.log("EnemyAI chose MovementAction")
 
-			return new MovementAction(this.game, this.parent, 
+			return new MovementAction(this.engine, this.parent, 
 				destX - this.parent.x, destY - this.parent.y)
 		}
 
-		return new WaitAction(this.game, this.parent)
+		return new WaitAction(this.engine, this.parent)
 	}
 }
 
 
 export class PlayerAI extends AI {
 	async chooseAction(): Promise<Action> {
-		return this.game.playerActionQueue.dequeue()
+		return this.engine.playerActionQueue.dequeue()
 	}
 }

@@ -3,10 +3,10 @@ import { Engine } from "./game/engine"
 
 
 async function gameLoop() {
-	let g = new Engine()
+	let engine = new Engine()
 	
 	while (true) {
-		await g.processTurn();
+		await engine.processTurn();
 	}
 }
 

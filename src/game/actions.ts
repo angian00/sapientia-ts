@@ -10,10 +10,10 @@ export interface ActionResult {
 
 export abstract class Action {
 	actor: Actor
-	game: Engine
+	engine: Engine
 
-	constructor(game: Engine, actor: Actor) {
-		this.game = game
+	constructor(engine: Engine, actor: Actor) {
+		this.engine = engine
 		this.actor = actor
 	}
 
@@ -23,8 +23,8 @@ export abstract class Action {
 export class WaitAction extends Action {
 	perform(): ActionResult {
 		//do nothing, spend a turn
-		if (this.game.map.visible[this.actor.x][this.actor.x])
-			this.game.messageLog.addMessage(this.actor.name + " is waiting... ")
+		if (this.engine.map.visible[this.actor.x][this.actor.x])
+			this.engine.messageLog.addMessage(this.actor.name + " is waiting... ")
 
 		return { success: true }
 	}
@@ -35,8 +35,8 @@ abstract class DirectionAction extends Action {
 	dx: number
 	dy: number
 
-	constructor(game: Engine, actor: Actor, dx: number, dy: number) {
-		super(game, actor)
+	constructor(engine: Engine, actor: Actor, dx: number, dy: number) {
+		super(engine, actor)
 		this.dx = dx
 		this.dy = dy
 	}
@@ -49,7 +49,7 @@ abstract class DirectionAction extends Action {
 
 	/** Return the actor at this actions destination */
 	get targetActor(): Actor {
-		return this.game.map.getActor(this.destXY[0], this.destXY[1])
+		return this.engine.map.getActor(this.destXY[0], this.destXY[1])
 	}
 
 	abstract perform(): ActionResult
@@ -58,9 +58,9 @@ abstract class DirectionAction extends Action {
 export class BumpAction extends DirectionAction {
 	perform(): ActionResult {
 		if (this.targetActor)
-			return (new MeleeAction(this.game, this.actor, this.dx, this.dy)).perform()
+			return (new MeleeAction(this.engine, this.actor, this.dx, this.dy)).perform()
 		else
-			return (new MovementAction(this.game, this.actor, this.dx, this.dy)).perform()
+			return (new MovementAction(this.engine, this.actor, this.dx, this.dy)).perform()
 	}
 }
 
@@ -80,16 +80,16 @@ export class MeleeAction extends DirectionAction {
 		let attackDesc = `${this.actor.name} attacks ${target.name}`
 
 		let msgClass
-		if (this.actor === this.game.player)
+		if (this.actor === this.engine.player)
 			msgClass = "player-attack"
 		else
 			msgClass = "enemy-attack"
 
 		if (damage > 0) {
-			this.game.messageLog.addMessage(`\u2694 ${attackDesc} for ${damage} hit points`, msgClass)
+			this.engine.messageLog.addMessage(`\u2694 ${attackDesc} for ${damage} hit points`, msgClass)
 			target.stats.hp -= damage
 		} else {
-			this.game.messageLog.addMessage(`\u2694 ${attackDesc} but does no damage`, msgClass)
+			this.engine.messageLog.addMessage(`\u2694 ${attackDesc} but does no damage`, msgClass)
 		}
 		
 		return { success: true }
@@ -100,10 +100,10 @@ export class MovementAction extends DirectionAction {
 	perform(): ActionResult {
 		let [destX, destY] = this.destXY
 
-		if (!this.game.map.inBounds(destX, destY) || !this.game.map.tiles[destX][destY].walkable)
+		if (!this.engine.map.inBounds(destX, destY) || !this.engine.map.tiles[destX][destY].walkable)
 			return { success: false, reason: "That way is blocked" }
 
-		if (this.game.map.getBlockingEntity(destX, destY))
+		if (this.engine.map.getBlockingEntity(destX, destY))
 			return { success: false, reason: "That way is blocked" }
 
 		this.actor.move(this.dx, this.dy)
@@ -119,7 +119,7 @@ export class PickupAction extends Action {
 		let actorY = this.actor.y
 		let inventory = this.actor.inventory
 
-		for (let e of this.game.map.entities) {
+		for (let e of this.engine.map.entities) {
 			if (!(e instanceof Item))
 				continue
 
@@ -130,12 +130,12 @@ export class PickupAction extends Action {
 			if (inventory.items.size >= inventory.capacity)
 				return { success: false, reason: "your inventory is full" }
 		
-			this.game.map.entities.delete(item)
+			this.engine.map.entities.delete(item)
 
 			item.parent = this.actor.inventory
 			inventory.items.add(item)
 
-			this.game.messageLog.addMessage(`you picked up the ${item.name}`)
+			this.engine.messageLog.addMessage(`you picked up the ${item.name}`)
 			return { success: true }
 
 		}
@@ -160,7 +160,7 @@ export abstract class ItemAction extends Action {
 
 	/** Return the actor at this actions destination */
 	get targetActor(): Actor {
-		return this.game.map.getActor(this.targetXY[0], this.targetXY[1])
+		return this.engine.map.getActor(this.targetXY[0], this.targetXY[1])
 	}
 
 	abstract perform(): ActionResult
@@ -175,6 +175,15 @@ export class DropAction extends ItemAction {
 
 		} else {
 			return { success: false, reason: "You don't have that item" }
+		}
+	}
+}
+
+
+export class UseAction extends ItemAction {
+	perform(): ActionResult {
+		if (this.item.consumable) {
+			return this.item.consumable.use(this)
 		}
 	}
 }

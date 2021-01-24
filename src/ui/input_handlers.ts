@@ -1,16 +1,16 @@
 
-import { Action, BumpAction, WaitAction, PickupAction, DropAction } from "../game/actions"
+import { Action, BumpAction, WaitAction, PickupAction, DropAction, UseAction } from "../game/actions"
 import { Engine } from "../game/engine"
 import { Dictionary } from "../util"
 import { Item } from "../game/entities"
 
 
 export abstract class InputHandler {
-	game: Engine
+	engine: Engine
 	eventListener: { (e: KeyboardEvent): void }
 
-	constructor(game: Engine) {
-		this.game = game
+	constructor(engine: Engine) {
+		this.engine = engine
 		this.eventListener = this.handleEvent.bind(this)
 	}
 
@@ -20,7 +20,7 @@ export abstract class InputHandler {
 
 export class GameInputHandler extends InputHandler {
 	handleEvent(e: KeyboardEvent): void {
-		let game = this.game
+		let engine = this.engine
 
 		let newAction = null
 		let keyCode = e.code
@@ -28,18 +28,18 @@ export class GameInputHandler extends InputHandler {
 		if (MOVE_KEYS.has(keyCode)) {
 			let move = MOVE_KEYS.get(keyCode)
 
-			newAction = new BumpAction(game, game.player, move[0], move[1])
+			newAction = new BumpAction(engine, engine.player, move[0], move[1])
 
 		} else if (keyCode in WAIT_KEYS) {
-			newAction = new WaitAction(game, game.player)
+			newAction = new WaitAction(engine, engine.player)
 		
 		} else if (keyCode == "KeyG") {
-			newAction = new PickupAction(game, game.player)
+			newAction = new PickupAction(engine, engine.player)
 
 		} else if (keyCode == "KeyI") {			
-			let itemMap = game.inventoryView.render(game.player.inventory)
-			let inventoryInputHandler = new InventoryInputHandler(game, itemMap)
-			game.setInputHandler(inventoryInputHandler)
+			let itemMap = engine.inventoryView.render(engine.player.inventory)
+			let inventoryInputHandler = new InventoryInputHandler(engine, itemMap)
+			engine.setInputHandler(inventoryInputHandler)
 
 			document.getElementById("dialogContainer").style.display = "block";
 			document.getElementById("inventoryDialog").style.display = "block";
@@ -51,21 +51,21 @@ export class GameInputHandler extends InputHandler {
 		}
 
 		if (newAction)
-			game.playerActionQueue.enqueue(newAction)
+			engine.playerActionQueue.enqueue(newAction)
 	}
 }
 
 export class InventoryInputHandler extends InputHandler {
 	itemMap: Dictionary<Item>
 
-	constructor(game: Engine, itemMap: Dictionary<Item>) {
-		super(game)
+	constructor(engine: Engine, itemMap: Dictionary<Item>) {
+		super(engine)
 
 		this.itemMap = itemMap
 	}
 	
 	handleEvent(e: KeyboardEvent): void {
-		let game = this.game
+		let engine = this.engine
 
 		let keyCode = e.code
 
@@ -73,21 +73,21 @@ export class InventoryInputHandler extends InputHandler {
 			this.backToGame()
 
 		} else if (e.key in this.itemMap) {
-			let newAction = new DropAction(game, game.player, this.itemMap[e.key])
-			game.playerActionQueue.enqueue(newAction)
+			let newAction = new UseAction(engine, engine.player, this.itemMap[e.key])
+			engine.playerActionQueue.enqueue(newAction)
 
 			this.backToGame()
 		}
 	}
 
 	backToGame(): void {
-		let game = this.game
+		let engine = this.engine
 		
-		game.setInputHandler(new GameInputHandler(game))
+		engine.setInputHandler(new GameInputHandler(engine))
 
-		game.gameView.renderMap(game.map)
-		game.gameView.renderStats(game.player.stats)
-		game.gameView.renderMessages(game.messageLog)
+		engine.gameView.renderMap(engine.map)
+		engine.gameView.renderStats(engine.player.stats)
+		engine.gameView.renderMessages(engine.messageLog)
 		document.getElementById("dialogContainer").style.display = "none";
 		document.getElementById("inventoryDialog").style.display = "none";
 	}

@@ -3,7 +3,7 @@ import { Actor, RenderOrder } from "../game/entities"
 import * as colors from "../ui/colors"
 
 export class Stats {
-	game: Engine
+	engine: Engine
 	parent: Actor
 
 	maxHp: number
@@ -11,8 +11,8 @@ export class Stats {
 	baseDef: number
 	baseAtt: number
 
-	constructor(game: Engine, parent: Actor, hp: number, baseDef: number, baseAtt: number) {
-		this.game = game
+	constructor(engine: Engine, parent: Actor, hp: number, baseDef: number, baseAtt: number) {
+		this.engine = engine
 		this.parent = parent
 
 		this.maxHp = hp
@@ -53,11 +53,31 @@ export class Stats {
 		return 0
 	}
 
+	heal(amount: number): number {
+		if (this.hp == this.maxHp)
+			return 0
+
+		let newHpValue = this.hp + amount
+		if (newHpValue > this.maxHp)
+			newHpValue = this.maxHp
+
+		let amountRecovered = newHpValue - this.hp
+
+		this.hp = newHpValue
+
+		return amountRecovered
+	}
+
+	takeDamage(amount: number): void {
+		this.hp -= amount
+	}
+
+
 	die(): void {
 		let deathMessage: string
 		let deathMessageClass: string
 
-		if (this.game.player == this.parent) {
+		if (this.engine.player == this.parent) {
 			deathMessage = "\u271F you died"
 			deathMessageClass = "player-death"
 		} else {
@@ -73,7 +93,7 @@ export class Stats {
 		this.parent.stats = null
 		this.parent.ai = null
 
-		this.game.messageLog.addMessage(deathMessage, deathMessageClass)
+		this.engine.messageLog.addMessage(deathMessage, deathMessageClass)
 
 		//this.game.player.level.add_xp(this.parent.level.xp_given)
 	}
