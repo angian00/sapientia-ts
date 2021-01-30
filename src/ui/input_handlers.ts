@@ -1,5 +1,6 @@
 
-import { Action, BumpAction, WaitAction, PickupAction, DropAction, UseAction } from "../game/actions"
+import { Action, BumpAction, WaitAction, PickupAction, DropAction, 
+	UseAction, EquipAction, CombineAction } from "../game/actions"
 import { Engine } from "../game/engine"
 import { Dictionary } from "../util"
 import { Item } from "../game/entities"
@@ -19,35 +20,78 @@ export abstract class InputHandler {
 
 
 export class GameInputHandler extends InputHandler {
+	compositeCommand?: string
+	tileSelection?: [number, number]
+
+
 	handleEvent(e: KeyboardEvent): void {
 		let engine = this.engine
 
 		let newAction = null
 		let keyCode = e.code
 
-		if (MOVE_KEYS.has(keyCode)) {
-			let move = MOVE_KEYS.get(keyCode)
+		if (this.compositeCommand) {
+			if (MOVE_KEYS.has(keyCode)) {
+				let moveMulti = 1
 
-			newAction = new BumpAction(engine, engine.player, move[0], move[1])
+				if (e.getModifierState("Shift"))
+					moveMulti *= 5
+				if (e.getModifierState("Control"))
+					moveMulti *= 10
+				if (e.getModifierState("Alt"))
+					moveMulti *= 20
 
-		} else if (keyCode in WAIT_KEYS) {
-			newAction = new WaitAction(engine, engine.player)
-		
-		} else if (keyCode == "KeyG") {
-			newAction = new PickupAction(engine, engine.player)
+				let move = MOVE_KEYS.get(keyCode)
 
-		} else if (keyCode == "KeyI") {			
-			let itemMap = engine.inventoryView.render(engine.player.inventory)
-			let inventoryInputHandler = new InventoryInputHandler(engine, itemMap)
-			engine.setInputHandler(inventoryInputHandler)
+				let [x, y] = this.tileSelection
+				let [dx, dy] = move
+				x += dx * moveMulti
+				y += dy * moveMulti
+				x = Math.max(0, Math.min(x, this.engine.map.width - 1))
+				y = Math.max(0, Math.min(y, this.engine.map.height - 1))
+				this.tileSelection = [x, y]
+				this.engine.gameView.renderMap(this.engine.map, this.tileSelection)
 
-			document.getElementById("dialogContainer").style.display = "block";
-			document.getElementById("inventoryDialog").style.display = "block";
+			} else if (keyCode in CONFIRM_KEYS) {
+				if (this.engine.map.visible[this.tileSelection[0]][this.tileSelection[1]])
+					this.engine.gameView.renderMapInfo(
+						this.engine.map.getEntities(this.tileSelection[0], this.tileSelection[1]))
 
-/*		} elseif (keyCode == "KeyD") {
-			return InventoryDropHandler(self.engine)
-		}
-*/
+				this.compositeCommand = null
+				this.tileSelection = null
+				this.engine.gameView.renderMap(this.engine.map)
+			}
+
+		} else {
+			if (MOVE_KEYS.has(keyCode)) {
+				let move = MOVE_KEYS.get(keyCode)
+
+				newAction = new BumpAction(engine, engine.player, move[0], move[1])
+
+			} else if (keyCode in WAIT_KEYS) {
+				newAction = new WaitAction(engine, engine.player)
+			
+			} else if (keyCode == "KeyG") {
+				newAction = new PickupAction(engine, engine.player)
+
+			} else if (keyCode == "KeyL") {
+				this.compositeCommand = keyCode
+				this.tileSelection = [this.engine.player.x, this.engine.player.y] 
+				this.engine.gameView.renderMap(this.engine.map, this.tileSelection)
+
+			} else if (keyCode == "KeyI") {
+				let itemMap = engine.inventoryView.render(engine.player.inventory, engine.player.equipment)
+				let inventoryInputHandler = new InventoryInputHandler(engine, itemMap)
+				engine.setInputHandler(inventoryInputHandler)
+
+				document.getElementById("dialogContainer").style.display = "block";
+				document.getElementById("inventoryDialog").style.display = "block";
+
+	/*		} elseif (keyCode == "KeyD") {
+				return InventoryDropHandler(self.engine)
+			}
+	*/
+			}
 		}
 
 		if (newAction)
@@ -58,6 +102,7 @@ export class GameInputHandler extends InputHandler {
 export class InventoryInputHandler extends InputHandler {
 	itemMap: Dictionary<Item>
 	selectedItemKey?: string
+	compositeCommand?: string
 
 	get selectedItem(): Item {
 		if (this.selectedItemKey)
@@ -75,38 +120,56 @@ export class InventoryInputHandler extends InputHandler {
 	handleEvent(e: KeyboardEvent): void {
 		let engine = this.engine
 
+		let newAction
 		let keyCode = e.code
 
 		if (keyCode == "Escape") {
+			this.selectedItemKey = null
+			this.compositeCommand = null
 			this.backToGame()
 
 		} else if (!this.selectedItemKey) {
-			console.log("setting selected key:" + e.key)
+			//console.log("setting selected key:" + e.key)
 			if (e.key in this.itemMap) {
 				this.selectedItemKey = e.key
 				this.setSelectedRow()
 			}
-		} else {
-			let newAction;
+		} else if (this.compositeCommand) {
+			if (e.key in this.itemMap) {
+				let secondItem = this.itemMap[e.key]
+				
+				if (this.compositeCommand == "KeyC") {
+					newAction = new CombineAction(engine, engine.player, 
+						this.selectedItem, secondItem)
+				}
+			}
 
+		} else {
 			if (keyCode == "KeyD") {
 				newAction = new DropAction(engine, engine.player, this.selectedItem)
-			} else if(keyCode == "KeyU") {
+			} else if (keyCode == "KeyU") {
 				newAction = new UseAction(engine, engine.player, this.selectedItem)
-			}
-
-			if (newAction) {
-				//reset status
-				this.selectedItemKey = null
-				this.setSelectedRow()
-
-				engine.playerActionQueue.enqueue(newAction)
-				this.backToGame()
+			} else if (keyCode == "KeyE" || keyCode == "KeyT") {
+				newAction = new EquipAction(engine, engine.player, this.selectedItem)
+			} else if (keyCode == "KeyC") {
+				this.compositeCommand = keyCode
+				this.setSelectedRow(null)
 			}
 		}
+
+		if (newAction) {
+			//reset status
+			this.selectedItemKey = null
+			this.compositeCommand = null
+			this.setSelectedRow()
+
+			engine.playerActionQueue.enqueue(newAction)
+			this.backToGame()
+		}
+
 	}
 
-	setSelectedRow(): void {
+	setSelectedRow(key=this.selectedItemKey): void {
 		console.log("setSelectedRow")
 
 		let rows = document.querySelectorAll(".inventory-row")
@@ -115,7 +178,7 @@ export class InventoryInputHandler extends InputHandler {
 			console.log(this.selectedItemKey)
 
 			if (this.selectedItem && 
-				row.querySelector(".inventory-item-letter").textContent == "(" + this.selectedItemKey + ")") {
+				row.querySelector(".inventory-item-letter").textContent == "(" + key + ")") {
 				row.classList.add("selected")
 
 			} else {
@@ -161,14 +224,14 @@ MOVE_KEYS.set("Numpad8", [0, -1])
 MOVE_KEYS.set("Numpad9", [1, -1])
 
 // vi keys
-MOVE_KEYS.set("KeyH", [-1, 0])
-MOVE_KEYS.set("KeyJ", [0, 1])
-MOVE_KEYS.set("KeyK", [0, -1])
-MOVE_KEYS.set("KeyL", [1, 0])
-MOVE_KEYS.set("KeyY", [-1, -1])
-MOVE_KEYS.set("KeyU", [1, -1])
-MOVE_KEYS.set("KeyB", [-1, 1])
-MOVE_KEYS.set("KeyN", [1, 1])
+//MOVE_KEYS.set("KeyH", [-1, 0])
+//MOVE_KEYS.set("KeyJ", [0, 1])
+//MOVE_KEYS.set("KeyK", [0, -1])
+//MOVE_KEYS.set("KeyL", [1, 0])
+//MOVE_KEYS.set("KeyY", [-1, -1])
+//MOVE_KEYS.set("KeyU", [1, -1])
+//MOVE_KEYS.set("KeyB", [-1, 1])
+//MOVE_KEYS.set("KeyN", [1, 1])
 
 
 enum WAIT_KEYS {

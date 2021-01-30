@@ -171,14 +171,16 @@ export class DropAction extends ItemAction {
 	perform(): ActionResult {
 		if (this.actor.inventory.items.has(this.item)) {
 			this.actor.inventory.drop(this.item)
+
+			this.engine.messageLog.addMessage(`${this.actor.name} drops the ${this.item.name}`)
+
 			return { success: true }
 
 		} else {
-			return { success: false, reason: "You don't have that item" }
+			return { success: false, reason: `${this.actor.name} doesn't have that item` }
 		}
 	}
 }
-
 
 export class UseAction extends ItemAction {
 	perform(): ActionResult {
@@ -187,3 +189,35 @@ export class UseAction extends ItemAction {
 		}
 	}
 }
+
+export class EquipAction extends ItemAction {
+	perform(): ActionResult {
+		if (this.item.equippable) {
+			this.actor.equipment.toggle(this.item)
+			return { success: true }
+		} else {
+			return { success: false, reason: "This item is not equippable" }
+		}
+	}
+}
+
+
+export class CombineAction extends Action {
+	item1: Item
+	item2: Item
+
+	constructor(engine: Engine, actor: Actor, item1: Item, item2: Item) {
+		super(engine, actor)
+		this.item1 = item1
+		this.item2 = item2
+	}
+
+	perform(): ActionResult {
+		if (this.item1.combinable && this.item2.combinable)
+			return this.item1.combinable.combine(this.item2.combinable)
+		else
+			return { success: false, reason: "Only ingredients can be combined" }
+	}
+
+}
+

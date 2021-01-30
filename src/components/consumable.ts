@@ -47,7 +47,7 @@ export class HealingConsumable extends Consumable {
 
 		if (amountHealed) {
 			this.engine.messageLog.addMessage(
-				`\u2600 ${consumer.name} consumes the ${this.parent.name}, and recovers ${amountHealed} hp`,
+				`\u2600 ${consumer.name} consumes the ${this.parent.name} and recovers ${amountHealed} hp`,
 				"player-heal")
 
 			this.consume()

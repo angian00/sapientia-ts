@@ -39,16 +39,16 @@ export class Stats {
 		return this.baseAtt + this.bonusAtt
 	}
 
-	get bonusDef(): number {
-		//if this.parent.equipment:
-		//return this.parent.equipment.bonusDef
+	get bonusAtt(): number {
+		if (this.parent.equipment)
+			return this.parent.equipment.bonusAtt
 
 		return 0
 	}
 
-	get bonusAtt(): number {
-		//if this.parent.equipment:
-		//return this.parent.equipment.bonusAtt
+	get bonusDef(): number {
+		if (this.parent.equipment)
+			return this.parent.equipment.bonusDef
 
 		return 0
 	}

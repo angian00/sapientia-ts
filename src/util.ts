@@ -50,5 +50,21 @@ export function removeFromList<T>(items: T[], toRemove: T) {
 
 
 export class Dictionary<T> {
-	[Key: string]: T;
+	[key: string]: T;
+}
+
+export class TypedDictionary<TK, TV> {
+	private values = new Dictionary<TV>()
+
+	getValue(k: TK): TV {
+		return <TV>this.values[k.toString()]
+	}
+
+	setValue(k: TK, v: TV): void {
+		this.values[k.toString()] = v
+	}
+
+	deleteValue(k: TK): void {
+		delete this.values[k.toString()]
+	}
 }

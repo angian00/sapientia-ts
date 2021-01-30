@@ -20,7 +20,5 @@ export class Inventory {
 	drop(item: Item): void {
 		this.items.delete(item)
 		this.engine.map.place(item, this.parent.x, this.parent.y)
-
-		this.engine.messageLog.addMessage(`You dropped the ${item.name}`)
 	}
 }

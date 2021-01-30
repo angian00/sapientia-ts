@@ -3,7 +3,7 @@ import * as ROT from "rot-js"
 import { mapWidth, mapHeight, lightRadius } from "../layout"
 import { Actor } from "./entities"
 import { Action, BumpAction, WaitAction, PickupAction } from "./actions"
-import { makeActor, ActorTypes, makeItem, ItemTypes, } from "./entity_factory"
+import { makeActor, ActorType, makeItem, ItemType, } from "./entity_factory"
 import { GameMap } from "./map"
 import { MessageLog } from "./messageLog"
 import { BlockingQueue } from "../util"
@@ -29,24 +29,46 @@ export class Engine {
 
 		this.setInputHandler(new GameInputHandler(this))
 
-		this.player = makeActor(this, ActorTypes.Player)
+		this.player = makeActor(this, ActorType.Player)
 		this.addActor(this.player)
 		this.map.place(this.player, 10, 10)
 
-		//DEBUG: add a single monster
-		let monster = makeActor(this, ActorTypes.Orc)
-		this.addActor(monster)
-		this.map.place(monster, 22, 12)
+		//DEBUG: add a consumable item
+		let potion = makeItem(this, ItemType.PotionHealth)
+		this.map.place(potion, 16, 8)
 		//
 
-		//DEBUG: add a single item
-		let item = makeItem(this, ItemTypes.HealthPotion)
-		this.map.place(item, 16, 8)
+		//DEBUG: add equipment items
+		let dagger = makeItem(this, ItemType.Dagger)
+		this.map.place(dagger, 19, 8)
+
+		let armor = makeItem(this, ItemType.LeatherArmor)
+		this.map.place(armor, 19, 10)
 		//
+
+		//DEBUG: add ingredients
+		let herb1 = makeItem(this, ItemType.HerbHenbane)
+		this.map.place(herb1, 17, 8)
+
+		let herb2 = makeItem(this, ItemType.HerbNightshade)
+		this.map.place(herb2, 17, 10)
+		//
+
+		//DEBUG: add monsters
+		let orc = makeActor(this, ActorType.Orc)
+		this.addActor(orc)
+		this.map.place(orc, 22, 12)
+
+		let troll = makeActor(this, ActorType.Troll)
+		this.addActor(troll)
+		this.map.place(troll, 32, 12)
+		//
+
 
 		this.fov.compute(this.player.x, this.player.y, lightRadius, this.setFov.bind(this))
 
 		this.gameView.renderMap(this.map)
+		this.gameView.renderMapInfo()
 		this.gameView.renderStats(this.player.stats)
 
 		this.messageLog.addMessage("Welcome, adventurer!")
@@ -69,6 +91,7 @@ export class Engine {
 		this.fov.compute(this.player.x, this.player.y, lightRadius, this.setFov.bind(this))
 
 		this.gameView.renderMap(this.map)
+		this.gameView.renderMapInfo()
 		this.gameView.renderStats(this.player.stats)
 		this.gameView.renderMessages(this.messageLog)
 	}

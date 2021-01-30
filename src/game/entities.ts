@@ -3,8 +3,11 @@ import { Engine } from "./engine"
 import { GameMap } from "./map"
 import { Stats } from "../components/stats"
 import { Inventory } from "../components/inventory"
+import { Equipment } from "../components/equipment"
 import { AI, PlayerAI } from "../components/ai"
 import { Consumable } from "../components/consumable"
+import { Equippable } from "../components/equippable"
+import { Combinable } from "../components/combinable"
 
 
 export enum RenderOrder {
@@ -46,6 +49,7 @@ export class Actor extends Entity {
 	engine: Engine
 	stats?: Stats
 	inventory?: Inventory
+	equipment?: Equipment
 	ai?: AI
 
 	constructor(engine: Engine, name: string, char = "?", color = "black") {
@@ -57,8 +61,8 @@ export class Actor extends Entity {
 		if (this.ai) {
 			while (true) {
 				let a = await this.ai.chooseAction()
-				console.log(`Performing action ${a.constructor.name}`)
-				console.log(a)
+				//console.log(`Performing action ${a.constructor.name}`)
+				//console.log(a)
 
 				let actionResult = a.perform()
 				if (!actionResult.success) {
@@ -80,8 +84,8 @@ export class Item extends Entity {
 	engine: Engine
 	parent?: Inventory | GameMap
 	consumable?: Consumable
-	//equippable?: Equippable
-	//combinable?: Combinable
+	equippable?: Equippable
+	combinable?: Combinable
 
 	constructor(game: Engine, name: string, char = "?", color = "black") {
 		super(name, char, color, false, RenderOrder.Item)

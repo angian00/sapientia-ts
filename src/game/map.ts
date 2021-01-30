@@ -67,6 +67,18 @@ export class GameMap {
 
 		return null
 	}
+
+
+	getEntities(x: number, y: number): Entity[] {
+		let result: Entity[] = []
+
+		for (let e of this.entities) {
+			if (e.x == x && e.y == y)
+				result.push(e)
+		}
+
+		return result
+	}
 }
 
 function genMap(): tiles.Terrain[][] {

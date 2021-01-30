@@ -3,10 +3,11 @@ import * as ROT from "rot-js"
 import { mapWidth, mapHeight } from "../layout"
 import { UnexploredTile } from "../game/tiles"
 import * as colors from "./colors"
-import { Entity } from "../game/entities"
+import { Entity, Actor } from "../game/entities"
 import { GameMap } from "../game/map"
 import { MessageLog } from "../game/messageLog"
 import { Inventory } from "../components/inventory"
+import { Equipment } from "../components/equipment"
 import { Stats } from "../components/stats"
 import { Dictionary } from "../util"
 import { Item } from "../game/entities"
@@ -21,7 +22,7 @@ export class GameView {
 			display = initDisplay()
 	}
 
-	renderMap(map: GameMap): void {
+	renderMap(map: GameMap, highlightedTile?: [number, number]): void {
 		//console.log("rendering map")
 
 		let entityTiles = entities2tiles(map.entities)
@@ -40,6 +41,8 @@ export class GameView {
 				let char = currTile.char
 				let fgColor = currTile.fgColor
 				let bgColor = currTile.bgColor
+				if (highlightedTile && highlightedTile[0] == x && highlightedTile[1] == y)
+					bgColor = colors.highlightTile
 
 				let e = entityTiles[x][y]
 				if (map.visible[x][y] && e) {
@@ -49,6 +52,40 @@ export class GameView {
 
 				display.draw(x, y, char, fgColor, bgColor);
 			}
+		}
+	}
+
+	renderMapInfo(entities?: Entity[]): void {
+		let actor
+		let items: Item[] = []
+		let newDiv
+
+		let container = document.getElementById("mapInfo")
+		container.textContent = ""
+
+		if (!entities)
+			return
+
+		for (let e of entities) {
+			if (e instanceof Actor) {
+				actor = e
+			} else if (e instanceof Item) {
+				items.push(e)
+			}
+		}
+
+		if (actor) {
+			newDiv = document.createElement("div")
+			newDiv.innerHTML = `${actor.name}`
+			container.appendChild(newDiv)
+			
+			container.appendChild(document.createElement("br"))
+		}
+
+		for (let item of items) {
+			newDiv = document.createElement("div")
+			newDiv.innerHTML = `${item.name}`
+			container.appendChild(newDiv)
 		}
 	}
 
@@ -76,6 +113,7 @@ export class GameView {
 
 		//TODO: other stats
 	}
+
 }
 
 
@@ -116,7 +154,7 @@ function entities2tiles(entities: Set<Entity>): Entity[][] {
 
 
 export class InventoryView {
-	render(inventory: Inventory): Dictionary<Item> {
+	render(inventory: Inventory, equipment: Equipment): Dictionary<Item> {
 		let itemMap: Dictionary<Item> = {}
 
 		let container = document.getElementById("inventoryContent")
@@ -131,12 +169,29 @@ export class InventoryView {
 			let currAscii = currLetter.charCodeAt(0)
 			for (let item of inventory.items) {
 				itemMap[currLetter] = item
+				let nameStr = item.name
+				let commandStr
+
+				if (item.equippable) {
+					if (equipment && equipment.isEquipped(item)) {
+						commandStr = "(d)rop / (t)akeoff"
+						nameStr += " [equipped]"
+					} else {
+						commandStr = "(d)rop / (e)quip"
+					}
+				} else if (item.combinable) {
+					commandStr = "(d)rop / (c)ombine with..."
+				} else if (item.consumable) {
+					commandStr = "(d)rop / (u)se"
+				} else {
+					commandStr = "(d)rop"
+				}
 
 				let newDiv = document.createElement("div")
 				newDiv.innerHTML = `<div class="inventory-row">` +
 						`<div class="inventory-item-letter">(${currLetter})</div>` +
-						`<div class="inventory-item-name">${item.name}</div>` +
-						`<div class="inventory-item-command">(d)rop / (u)se</div>` +
+						`<div class="inventory-item-name">${nameStr}</div>` +
+						`<div class="inventory-item-command">${commandStr}</div>` +
 					`</div>`
 				container.appendChild(newDiv)
 					

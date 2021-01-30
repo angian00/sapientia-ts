@@ -3,6 +3,7 @@ export const defaultDark = "#4a1e06"
 
 export const black = "black"
 
+export const highlightTile = "yellow"
 
 export const floorDark = "#909090"
 export const floorLight = "#C8C8C8"
