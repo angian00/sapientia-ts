@@ -1,6 +1,14 @@
 # Changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [0.1.0] - 2021-01-30
+### Changed
+- Ported everything to javascript (rot.js engine)
+- Improved layout and text rendering
+
+### Removed
+- procgen part (to be re-added piece-wise when/if needed)
+
 
 ## [0.0.4] - 2021-01-15
 ### Added
