@@ -1,0 +1,122 @@
+# Antiqua Sapientia
+Un roguelike quest-based, con personaggi, eventi storici, artefatti generati proceduralmente.
+Ispirato a Caves of Qud e probabilmente simile a Ultima Ratio Regum.
+
+Ambientazione: ispirata al medioevo in Italia centrale, tra monasteri e abbazie.
+Scopo: accumulare quanta più conoscenza possibile accedendo ad antichi manoscritti.
+
+
+## Storia esempio
+Baldovino è un monaco. Viene incaricato dal suo abate? priore? di recuperare i manoscritti perduti del profeta Geremia. Prima di tutto deve consultare la biblioteca del monastero in cerca di indizi, poi recarsi a Montemaggiore, dove forse l'economo Petrus ha qualche suggerimento da dargli.
+Nella biblioteca accede ad alcuni comuni testi base: la Philosophia Naturalis di Berzelius, De agricoltura dell'Ignoto Normanno, l'Almanacco Lunare del Contadino. Interagisce con altri monaci del monastero (l'umile Tabaccaio, il vecchio Aleck) e ottiene così altri frammenti di informazione, sulla geografia dei dintorni e la storia politica recente: la Contea Remota, il Barone Clausius, le Marche Perdute. Fatto ciò, si incammina per l'abbazia di Montemaggiore.
+
+
+## Idee
+- generazione mondo (no biomi, modello Italia centrale)
+	- catena montuosa centrale con ramificazioni
+	- colline e piccole pianure
+	? strade
+
+- generazione geografia secondo livello (luoghi):
+	v monastero
+	- santuario
+	- castello
+	v villaggio
+	- fattoria
+
+- generazione ground truth
+	- filosofia naturale
+	- teologia
+	- erboristeria
+	- bestiario
+	- biografie
+	- storie dei luoghi
+	- penitenziario (elenco peccati e penitenze)
+	- inni sacri
+
+- generazione e collocazione libri
+
+- generazione e collocazione altri items:
+	- equipaggiamento
+	- monumenti
+	- reliquie
+	- manufatti
+	- ingredienti
+	
+- generazione e collocazione NPC
+- gestione quest
+- visualizz journal
+- interaz NPC:
+	- conversazione
+	- attacco (stabbing, poisoning, inganno)
+	- aiuto: scambio
+		- ricetta
+		- ingrediente
+		- item
+		- denaro
+
+- libri --> frammenti di conoscenza
+- grafo riferimenti tra personaggi storici, tra personaggi e libri
+- piante
+	- occasione di conoscenza:
+		- vista
+		- toccata
+		- preparata e assaggiata
+		- esperimento specifico
+	Ogni occasione di conoscenza ha % di prob di rivelare frammento di truth
+	I libri (ricettari) contengono frammenti di truth, in prima istanza sempre affidabili.
+
+	- trattamento:
+		- polvere
+		- decotto
+		- impiastro
+		- elettuario
+	polvere    X  +  elettuario Y  = elettuario (X + Y)
+	polvere    X  +  decotto    Y  = decotto    (X + Y)
+	elettuario X  +  decotto    Y  = decotto    (X + Y)
+	polvere    X  +  impiastro  Y  = impiastro  (X + Y)
+	elettuario X  +  impiastro  Y  = impiastro  (X + Y)
+	decotto    X  +  impiastro  Y  = impiastro  (X + Y)
+
+- creature
+	- occasione di conoscenza:
+		- vista
+		- toccata
+		- preparata e assaggiata
+	- trattamento: macellazione +
+		- stufato
+		- sugo
+		- polvere
+		- (amuleto)
+
+- specie di erbe (e creature) generati casualmente
+
+
+## Idea 2: RPG - The Last of the Knight Templars
+- geographical scale like Baldurs Gate:
+	- a world map with few fixed places, progressively available
+	- outdoor maps with entrances to ~10 places, + roaming monsters
+	- dungeon maps (mixed random/template generated on first visit)
+
+- storyline:
+Il capo dei Templari di Novara, Guiscardo, ci ha incaricato di indagare su strani delitti nell'Abbazia di Boninfiore. Indaghiamo (il colpevole è il bibliotecario). Nel corso del soggiorno ci arriva una lettera di Guiscardo, che anticipa che ci farà visita, ci sono novità. Quando lo incontriamo è agonizzante. Ha un foglio, che accenna alle "reliquie di San Giacomo".
+Chiediamo in giro di San Giacomo, ci sono due santuari: uno a S. G. apostolo, vicino, è una falsa pista; uno più lontano a S. G. Minore ha nascosto un oggetto, un frammento di pietra. Un'indagine in biblioteca (possibile solo dopo che abbiamo catturato il bibliotecario) rivela che si tratta di un frammento del Sigillo Perduto di Gerusalemme. 
+...
+
+
+- factions:
+	0-n tags per npc: Monk, Heretic, Templar, Inquisitor, Peasant, etc
+
+- quest state machine + scripting:
+	- npc scripts are attached to event handlers and/or dialog tree entries
+
+- user-friendly journal:
+	- open quests (with progressively compiled flavor text)
+	- past quests
+	- past conversations
+	- monster lore (progressively revealed with further encounters with same monster)
+
+
+
+
+
