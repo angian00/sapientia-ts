@@ -1,8 +1,5 @@
 # TODO
 
-# release 0.1.0
-- recover other dirs from sapientia old
-- publish on github
 
 # release 0.1.1
 - mouse info panel

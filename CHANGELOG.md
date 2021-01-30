@@ -7,7 +7,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - Improved layout and text rendering
 
 ### Removed
-- procgen part (to be re-added piece-wise when/if needed)
+- procgen routines (to be re-added piece-wise when/if needed)
+- 2-level map navigation (to be re-added)
 
 
 ## [0.0.4] - 2021-01-15
