@@ -1,8 +1,10 @@
 # TODO
 
 # release 0.1.1
-- map loader
-- two-level map navigation
+- configurable start player position in map
+- use map label
+- load multiple maps per file
+
 ? npc/monster loader
 
 
@@ -18,6 +20,8 @@
 - find player image
 - find logo and favicon
 - centrare mappa quando dim < max dim
+- make game start depending on successful data loading
+
 
 # Features
 - mouse info panel

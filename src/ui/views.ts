@@ -1,7 +1,7 @@
 import * as ROT from "rot-js"
 
 import * as colors from "./colors"
-import { Entity, Actor, Item } from "../game/entities"
+import { Entity, Actor, Item, Site } from "../game/entities"
 import { GameMap } from "../game/map"
 import { MessageLog } from "../game/messageLog"
 import { UnexploredTile } from "../game/terrain"
@@ -26,7 +26,8 @@ export class GameView {
 		//console.log("rendering map")
 
 		let entityTiles = entities2tiles(map.width, map.height, map.entities)
-
+		display.clear()
+		
 		for (let x = 0; x < map.width; x++) {
 			for (let y = 0; y < map.height; y++) {
 				let currTile
@@ -48,6 +49,12 @@ export class GameView {
 				if (map.visible[x][y] && e) {
 					char = e.char
 					fgColor = e.color
+				} else {
+					let site = map.getSiteAt(x, y)
+					if (site) {
+						char = site.char
+						fgColor = site.darkColor
+					}
 				}
 
 				display.draw(x, y, char, fgColor, bgColor);
@@ -56,7 +63,8 @@ export class GameView {
 	}
 
 	renderMapInfo(entities?: Entity[]): void {
-		let actor
+		let actor: Actor
+		let site: Site
 		let items: Item[] = []
 		let newDiv
 
@@ -69,24 +77,37 @@ export class GameView {
 		for (let e of entities) {
 			if (e instanceof Actor) {
 				actor = e
+			} else if (e instanceof Site) {
+				site = e
 			} else if (e instanceof Item) {
 				items.push(e)
 			}
+		}
+
+		if (site) {
+			newDiv = document.createElement("div")
+			newDiv.innerHTML = `[${site.name}]`
+			container.appendChild(newDiv)
 		}
 
 		if (actor) {
 			newDiv = document.createElement("div")
 			newDiv.innerHTML = `${actor.name}`
 			container.appendChild(newDiv)
-			
-			container.appendChild(document.createElement("br"))
 		}
 
+		let itemText = ""
+		let firstItem = true
 		for (let item of items) {
-			newDiv = document.createElement("div")
-			newDiv.innerHTML = `${item.name}`
-			container.appendChild(newDiv)
+			if (!firstItem)
+				itemText += `, `
+			itemText += `${item.name}`
+			firstItem = false
 		}
+
+		newDiv = document.createElement("div")
+		newDiv.innerHTML = itemText
+		container.appendChild(newDiv)
 	}
 
 	renderMessages(messageLog: MessageLog): void {

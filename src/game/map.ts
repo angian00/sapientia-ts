@@ -1,7 +1,8 @@
 import * as ROT from "rot-js"
 
 import { Terrain } from "./terrain"
-import { Entity, Actor } from "./entities"
+import { Entity, Actor, Site } from "./entities"
+import { getRandomInt } from "../util" 
 
 
 export class GameMap {
@@ -45,6 +46,7 @@ export class GameMap {
 		e.x = x
 		e.y = y
 
+		//TODO: remove e from old map entities
 		this.entities.add(e)
 	}
 
@@ -53,7 +55,7 @@ export class GameMap {
 	}
 
 
-	getActor(x: number, y: number): Actor {
+	getActorAt(x: number, y: number): Actor {
 		for (let e of this.entities) {
 			if (e.x == x && e.y == y && (e instanceof Actor) && (e.stats))
 				return e
@@ -62,7 +64,16 @@ export class GameMap {
 		return null
 	}
 
-	getBlockingEntity(x: number, y: number): Entity {
+	getSiteAt(x: number, y: number): Site {
+		for (let e of this.entities) {
+			if (e.x == x && e.y == y && (e instanceof Site))
+				return e
+		}
+
+		return null
+	}
+
+	getBlockingEntityAt(x: number, y: number): Entity {
 		for (let e of this.entities) {
 			if (e.x == x && e.y == y && e.isBlocking)
 				return e
@@ -82,23 +93,22 @@ export class GameMap {
 
 		return result
 	}
-}
 
-/*
-function genMap(): tiles.Terrain[][] {
-	let map: tiles.Terrain[][] = []
+	placeRandom(entity: Entity): void {
+		let x: number
+		let y: number
 
-	for (let x = 0; x < mapWidth; x++) {
-		map[x] = []
-		for (let y = 0; y < mapHeight; y++) {
-			//walls on the borders
-			if (x == 0 || x == mapWidth - 1 || y == 0 || y == mapHeight - 1)
-				map[x].push(tiles.Wall)
-			else
-				map[x].push(tiles.Floor)
+		while (true) {
+			x = getRandomInt(0, this.width - 1)
+			y = getRandomInt(0, this.height - 1)
+
+			if (this.tiles[x][y].walkable && (!this.getBlockingEntityAt(x, y)))
+				break
 		}
+
+		this.place(entity, x, y)
 	}
 
-	return map
+
+
 }
-*/

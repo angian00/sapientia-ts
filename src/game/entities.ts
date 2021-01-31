@@ -81,18 +81,29 @@ export class Actor extends Entity {
 
 
 export class Item extends Entity {
-	engine: Engine
 	parent?: Inventory | GameMap
 	consumable?: Consumable
 	equippable?: Equippable
 	combinable?: Combinable
 
-	constructor(game: Engine, name: string, char = "?", color = "black") {
+	constructor(name: string, char = "?", color = "black") {
 		super(name, char, color, false, RenderOrder.Item)
-		this.engine = game
 	}
 
 	use(): void {
 
+	}
+}
+
+
+export class Site extends Entity {
+	parent?: GameMap
+	darkColor: string
+	mapName: string
+
+	constructor(name: string, char = "*", color = "black", darkColor = "darkgrey", mapName: string) {
+		super(name, char, color, false, RenderOrder.Site)
+		this.darkColor = darkColor
+		this.mapName = mapName
 	}
 }

@@ -135,7 +135,7 @@ export function makeItem(engine: Engine, itemType: ItemType): Item {
 			break
 	}
 
-	let item = new Item(engine, name, char, color)
+	let item = new Item(name, char, color)
 
 	switch (itemType) {
 		case ItemType.PotionHealth:

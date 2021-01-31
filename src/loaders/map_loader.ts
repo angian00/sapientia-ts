@@ -1,4 +1,5 @@
 import { Terrain, TerrainAspect } from "../game/terrain"
+import { Site } from "../game/entities"
 import { GameMap } from "../game/map"
 import { Dictionary } from "../util"
 
@@ -16,7 +17,10 @@ enum DataType {
 export async function loadAllData(): Promise<any> {
 	terrainDefs = await loadData("terrains.txt", DataType.TerrainDef)
 	
-	loadData("test_map.txt", DataType.Map).then(map => { gameMaps[map.name] = map })
+	const mapFiles = [ "test_map_world.txt", "test_map_milano.txt" ]
+	//TODO: join promises
+	for (let f of mapFiles)
+		loadData(f, DataType.Map).then(map => { gameMaps[map.name] = map })
 }
 
 
@@ -69,7 +73,7 @@ function parseTerrainDef(text: string): Dictionary<Terrain> {
 			let lightFgColor = tokens[7]
 			let lightBgColor = tokens[8]
 
-			//TODO: better validate fields
+			//TODO: validate fields better
 
 			let newTerrain = new Terrain(
 				walkable,
@@ -91,14 +95,17 @@ enum MapSection {
 	TerrainCodes,
 	TileList,
 	ItemList,
+	SiteList,
 }
 
 function parseMap(text: string): GameMap {
 	let lines: string[] = text.split("\n")
+	let tokens: string[]
 	let currSection: MapSection
 	let metadata = new Dictionary<string>()
 	let terrainCodes = new Dictionary<Terrain>()
 	let tiles: Terrain[][] = []
+	let sites: Site[] = []
 
 
 	for (let line of lines) {
@@ -116,6 +123,8 @@ function parseMap(text: string): GameMap {
 				currSection = MapSection.TileList
 			else if (sectionName === "item_list")
 				currSection = MapSection.ItemList
+			else if (sectionName === "site_list")
+				currSection = MapSection.SiteList
 			else
 				console.log(`!! Invalid section name: ${sectionName}`)
 			
@@ -154,7 +163,7 @@ function parseMap(text: string): GameMap {
 					break
 
 				case MapSection.TileList:
-					let tokens = line.split(",")
+					tokens = line.split("|")
 					let tileRow: Terrain[] = []
 					let rowOk = true
 
@@ -176,6 +185,35 @@ function parseMap(text: string): GameMap {
 
 				case MapSection.ItemList:
 					//TODO: MapSection.ItemList
+					break
+
+				case MapSection.SiteList:
+					//name | label | pos_x | pos_y | [char] | [map]
+					tokens = line.split("|")
+					if (tokens.length != 7) {
+						console.log(`!! Malformed site record: [${line}]`)
+					} else {
+						let name  = tokens[0]
+						let xPos  = +tokens[1]
+						let yPos  = +tokens[2]
+						let char  = tokens[3]
+						let color = tokens[4]
+						let darkColor = tokens[5]
+						let mapName = tokens[6]
+
+						if (char == "")
+							char = null
+						if (color == "")
+							color = null
+						if (darkColor == "")
+							darkColor = null
+						
+						let site = new Site(name, char, color, darkColor, mapName)
+						site.x = xPos
+						site.y = yPos
+						sites.push(site)
+					}
+
 					break
 
 				default:
@@ -209,7 +247,12 @@ function parseMap(text: string): GameMap {
 	}
 
 	let map = new GameMap(mapName, w, h, transpose<Terrain>(tiles))
-	//let map = new GameMap(mapName, w, h, tiles)
+
+	for (let site of sites) {
+		site.parent = map
+		map.entities.add(site)
+	}
+
 	return map
 }
 

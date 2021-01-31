@@ -2,6 +2,10 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
+### Added
+- map loading from file
+- restored navigation among multiple levels of map
+
 ### Changed
 - Improved webpack performance
 - Moved html and css to their own dir

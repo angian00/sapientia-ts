@@ -1,0 +1,31 @@
+%metadata
+type:map
+subtype:town
+name:test_map_milano
+label:Milano
+width:6
+height:6
+
+%terrain_codes
+1:town_floor
+2:town_wall
+
+%tile_list
+# format: 
+# x -->
+# y 
+# |
+# v
+1|1|1|1|1|1
+1|1|1|2|2|1
+1|1|1|2|2|1
+2|2|1|1|1|1
+2|2|1|1|1|1
+1|1|1|1|1|1
+
+
+%item_list
+
+%site_list
+#format: 
+#name|pos_x|pos_y|[char]|[color]|[darkColor]|[map]

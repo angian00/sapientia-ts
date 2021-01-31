@@ -68,3 +68,9 @@ export class TypedDictionary<TK, TV> {
 		delete this.values[k.toString()]
 	}
 }
+
+
+
+export function getRandomInt(min: number=0, max: number) {
+	return Math.floor(Math.random() * (max - min + 1) + min)
+}

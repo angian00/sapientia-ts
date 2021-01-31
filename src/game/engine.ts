@@ -5,6 +5,7 @@ import { Actor } from "./entities"
 import { Action } from "./actions"
 import { makeActor, ActorType, makeItem, ItemType, } from "./entity_factory"
 import { GameMap } from "./map"
+import { GameWorld } from "./world"
 import { MessageLog } from "./messageLog"
 import { BlockingQueue } from "../util"
 import { InputHandler, GameInputHandler } from "../ui/input_handlers"
@@ -15,6 +16,8 @@ import { gameMaps } from "../loaders/map_loader"
 export class Engine {
 	//map = new GameMap(mapWidth, mapHeight)
 	map: GameMap
+	world: GameWorld
+
 	actors: Actor[] = []
 	player: Actor
 	messageLog = new MessageLog()
@@ -30,10 +33,13 @@ export class Engine {
 		console.log("Game constructor")
 		this.setInputHandler(new GameInputHandler(this))
 
-		this.map = gameMaps["test_map"]
+		this.world = new GameWorld(this)
+
 		this.player = makeActor(this, ActorType.Player)
 		this.addActor(this.player)
-		this.map.place(this.player, 4, 4)
+		
+		this.world.pushMap(gameMaps["test_map_world"])
+		//this.map.place(this.player, 4, 4)
 
 		/*
 		//DEBUG: add a consumable item
