@@ -2,7 +2,8 @@ const path = require('path');
 
 module.exports = {
 	// bundling mode
-	mode: 'production',
+	//mode: 'production',
+	mode: 'development',
 
 	// entry files
 	entry: './src/index.ts',
@@ -11,9 +12,16 @@ module.exports = {
 	output: {
 		path: path.resolve(__dirname, 'dist'),
 		filename: 'main.js',
+		pathinfo: false
 	},
 
 	devtool: 'source-map',  // generate source map
+
+	optimization: {
+		removeAvailableModules: false,
+		removeEmptyChunks: false,
+		splitChunks: false,
+	},
 
 	// file resolutions
 	resolve: {
@@ -25,8 +33,16 @@ module.exports = {
 		rules: [
 			{
 				test: /\.tsx?/,
-				use: 'ts-loader',
 				exclude: /node_modules/,
+				use: [
+					{
+						loader: 'ts-loader',
+						options: {
+							transpileOnly: true,
+							experimentalWatchApi: true,
+						},
+					},
+  				],
 			}
 		]
 	}
