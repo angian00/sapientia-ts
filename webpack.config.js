@@ -1,4 +1,6 @@
 const path = require('path');
+const CopyPlugin = require("copy-webpack-plugin");
+
 
 module.exports = {
 	// bundling mode
@@ -44,6 +46,19 @@ module.exports = {
 					},
   				],
 			}
-		]
-	}
+		],
+	},
+
+	plugins: [
+		new CopyPlugin({
+			patterns: [
+				{ from: "html" },
+				{ from: "media", to: "media" },
+				{ from: "data", to: "data" },
+			],
+			options: {
+				concurrency: 100,
+			},
+		}),
+	],
 };
