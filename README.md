@@ -3,16 +3,13 @@
 A roguelike set in Middle Ages Italy.
 Inspired by "The name of the rose" by Umberto Eco.
 
-## Requirements
-- Python >= 3.6
-- libtcod  install with `pip3 install tcod`
-
 
 ## Running the game
-- open a terminal
-- `git clone` the project
-- navigate to `<project dir>/src`
-- run `python3 ./main.py`
+- open a browser pointing to ...
+
+## Development
+The game code is written in TypeScript. You need to have a working up to date node+npm environment. The dependencies are specified in the package.json file.
+
 
 
 ## UI

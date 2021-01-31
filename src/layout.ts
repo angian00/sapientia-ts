@@ -1,4 +1,4 @@
-export const mapWidth = 60
-export const mapHeight = 36
+export const maxMapWidth = 60
+export const maxMapHeight = 36
 
 export const lightRadius = 8

@@ -1,0 +1,12 @@
+#terrain type definition file; format: 
+#<id>|walkable|transparent|dark char|dark fg color|dark bg color|light char|light fg color|light bg color
+
+town_floor|true|true|.|black|#909090|.|black|#C8C8C8
+town_wall|false|false| |black|#404040| |black|black
+
+plains_1|true|true| |#404035|#737360| |#737360|#a5a58d
+plains_2|true|true| |#4f4f46|#7d7d6f| |#7d7d6f|#b7b7a4
+hills_1|true|true|∩|#2b2e25|#494d3e|∩|#494d3e|#6b705c
+hills_2|true|true|∩|#4f3b30|#8a6754|∩|#8a6754|#cb997e
+mountains|true|true|▲|#52453c|#968172|▲|#968172|#ddbea9
+

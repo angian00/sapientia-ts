@@ -1,21 +1,24 @@
 import * as ROT from "rot-js"
 
-import { mapWidth, mapHeight } from "../layout"
-import * as tiles from "./tiles"
+import { Terrain } from "./terrain"
 import { Entity, Actor } from "./entities"
 
 
 export class GameMap {
+	name: string
 	width: number
 	height: number
-	tiles: tiles.Terrain[][] = genMap()
+	tiles: Terrain[][]
 	entities: Set<Entity> = new Set()
 	visible: boolean[][]
 	explored: boolean[][]
 
-	constructor(width: number, height: number) {
+
+	constructor(name: string, width: number, height: number, tiles?: Terrain[][]) {
+		this.name = name
 		this.width = width
 		this.height = height
+		this.tiles = tiles
 
 		this.visible = []
 		this.explored = []
@@ -81,6 +84,7 @@ export class GameMap {
 	}
 }
 
+/*
 function genMap(): tiles.Terrain[][] {
 	let map: tiles.Terrain[][] = []
 
@@ -97,4 +101,4 @@ function genMap(): tiles.Terrain[][] {
 
 	return map
 }
-
+*/

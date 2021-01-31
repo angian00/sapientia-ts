@@ -1,7 +1,7 @@
 import * as colors from "../ui/colors"
 
 
-class Tile {
+export class TerrainAspect {
 	char: string
 	fgColor: string
 	bgColor: string
@@ -16,10 +16,10 @@ class Tile {
 export class Terrain {
 	walkable: boolean
 	transparent: boolean
-	darkTile: Tile
-	lightTile: Tile
+	darkTile: TerrainAspect
+	lightTile: TerrainAspect
 
-	constructor(walkable: boolean, transparent: boolean, darkTile: Tile, lightTile: Tile) {
+	constructor(walkable: boolean, transparent: boolean, darkTile: TerrainAspect, lightTile: TerrainAspect) {
 		this.walkable = walkable
 		this.transparent = transparent
 		this.darkTile = darkTile
@@ -27,14 +27,14 @@ export class Terrain {
 	}
 }
 
-export const UnexploredTile = new Tile("\u2591", "#909090", "black")
+export const UnexploredTile = new TerrainAspect("\u2591", "#909090", "black")
 
 export const Floor = new Terrain(true, true, 
-	new Tile(".", colors.black, colors.floorDark),
-	new Tile(".", colors.black, colors.floorLight),
+	new TerrainAspect(".", colors.black, colors.floorDark),
+	new TerrainAspect(".", colors.black, colors.floorLight),
 )
 
 export const Wall = new Terrain(false, false, 
-	new Tile(" ", colors.wallDark, colors.wallDark),
-	new Tile(" ", colors.wallLight, colors.wallLight),
+	new TerrainAspect(" ", colors.wallDark, colors.wallDark),
+	new TerrainAspect(" ", colors.wallLight, colors.wallLight),
 )

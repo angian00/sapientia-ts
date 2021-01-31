@@ -1,18 +1,20 @@
 import * as ROT from "rot-js"
 
-import { mapWidth, mapHeight, lightRadius } from "../layout"
+import { lightRadius } from "../layout"
 import { Actor } from "./entities"
-import { Action, BumpAction, WaitAction, PickupAction } from "./actions"
+import { Action } from "./actions"
 import { makeActor, ActorType, makeItem, ItemType, } from "./entity_factory"
 import { GameMap } from "./map"
 import { MessageLog } from "./messageLog"
 import { BlockingQueue } from "../util"
 import { InputHandler, GameInputHandler } from "../ui/input_handlers"
 import { GameView, InventoryView } from "../ui/views"
+import { gameMaps } from "../loaders/map_loader"
 
 
 export class Engine {
-	map = new GameMap(mapWidth, mapHeight)
+	//map = new GameMap(mapWidth, mapHeight)
+	map: GameMap
 	actors: Actor[] = []
 	player: Actor
 	messageLog = new MessageLog()
@@ -26,13 +28,14 @@ export class Engine {
 
 	constructor() {
 		console.log("Game constructor")
-
 		this.setInputHandler(new GameInputHandler(this))
 
+		this.map = gameMaps["test_map"]
 		this.player = makeActor(this, ActorType.Player)
 		this.addActor(this.player)
-		this.map.place(this.player, 10, 10)
+		this.map.place(this.player, 4, 4)
 
+		/*
 		//DEBUG: add a consumable item
 		let potion = makeItem(this, ItemType.PotionHealth)
 		this.map.place(potion, 16, 8)
@@ -63,7 +66,7 @@ export class Engine {
 		this.addActor(troll)
 		this.map.place(troll, 32, 12)
 		//
-
+*/
 
 		this.fov.compute(this.player.x, this.player.y, lightRadius, this.setFov.bind(this))
 
@@ -113,6 +116,9 @@ export class Engine {
 	}
 
 	setFov(x: number, y: number, r: number, visibility: number) {
+		if (x < 0 || x >= this.map.width || y < 0 || y >= this.map.height)
+			return
+		
 		this.map.visible[x][y] = !!visibility
 		if (this.map.visible[x][y])
 			this.map.explored[x][y] = true

@@ -61,7 +61,7 @@ export class Actor extends Entity {
 		if (this.ai) {
 			while (true) {
 				let a = await this.ai.chooseAction()
-				//console.log(`Performing action ${a.constructor.name}`)
+				console.log(`Performing ${a.constructor.name}`)
 				//console.log(a)
 
 				let actionResult = a.perform()

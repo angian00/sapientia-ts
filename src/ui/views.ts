@@ -1,16 +1,16 @@
 import * as ROT from "rot-js"
 
-import { mapWidth, mapHeight } from "../layout"
-import { UnexploredTile } from "../game/tiles"
 import * as colors from "./colors"
-import { Entity, Actor } from "../game/entities"
+import { Entity, Actor, Item } from "../game/entities"
 import { GameMap } from "../game/map"
 import { MessageLog } from "../game/messageLog"
+import { UnexploredTile } from "../game/terrain"
 import { Inventory } from "../components/inventory"
 import { Equipment } from "../components/equipment"
 import { Stats } from "../components/stats"
 import { Dictionary } from "../util"
-import { Item } from "../game/entities"
+import { maxMapWidth, maxMapHeight } from "../layout"
+
 
 let display: ROT.Display;
 
@@ -25,10 +25,10 @@ export class GameView {
 	renderMap(map: GameMap, highlightedTile?: [number, number]): void {
 		//console.log("rendering map")
 
-		let entityTiles = entities2tiles(map.entities)
+		let entityTiles = entities2tiles(map.width, map.height, map.entities)
 
-		for (let x = 0; x < mapWidth; x++) {
-			for (let y = 0; y < mapHeight; y++) {
+		for (let x = 0; x < map.width; x++) {
+			for (let y = 0; y < map.height; y++) {
 				let currTile
 
 				if (map.visible[x][y])
@@ -119,8 +119,8 @@ export class GameView {
 
 function initDisplay(): ROT.Display {
 	display = new ROT.Display({
-		width: mapWidth,
-		height: mapHeight,
+		width: maxMapWidth,
+		height: maxMapHeight,
 		fontFamily: "menlo",
 		fontSize: 20,
 		forceSquareRatio: true,
@@ -134,12 +134,12 @@ function initDisplay(): ROT.Display {
 }
 
 
-function entities2tiles(entities: Set<Entity>): Entity[][] {
+function entities2tiles(w: number, h: number, entities: Set<Entity>): Entity[][] {
 	let res: Entity[][] = []
 
-	for (let x = 0; x < mapWidth; x++) {
+	for (let x = 0; x < w; x++) {
 		res[x] = []
-		for (let y = 0; y < mapHeight; y++) {
+		for (let y = 0; y < h; y++) {
 			res.push(null)
 		}
 	}
