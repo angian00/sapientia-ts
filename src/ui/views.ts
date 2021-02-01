@@ -53,7 +53,7 @@ export class GameView {
 				if (map.visible[x][y] && e) {
 					char = e.char
 					fgColor = e.color
-				} else {
+				} else if (map.explored[x][y]) {
 					let site = map.getSiteAt(x, y)
 					if (site) {
 						char = site.char

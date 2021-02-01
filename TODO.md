@@ -3,9 +3,6 @@
 ## Next releases
 
 ### release 0.1.2
-- full-scale outdoor map
-- make game start depending on successful data loading
-- center small maps in canvas
 - fix flex-shrink stats panel
 - make messageView scrollable
 - uniform messageLog invocation
@@ -39,7 +36,7 @@
 	- make corpses items
 - inventory interaction
 	- "combine" command interface
-
+- find a good way to edit maps (pixel editor?)
 
 # Macro Features
 - loaders

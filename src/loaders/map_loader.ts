@@ -18,9 +18,12 @@ export async function loadAllData(): Promise<any> {
 	terrainDefs = await loadData("terrains.txt", DataType.TerrainDef)
 	
 	const mapFiles = [ "test_map_world.txt", "test_map_milano.txt" ]
-	//TODO: join promises
+	let promises: Promise<void>[] = []
+
 	for (let f of mapFiles)
-		loadData(f, DataType.Map)
+		promises.push(loadData(f, DataType.Map))
+	
+	return Promise.all(promises)
 }
 
 
@@ -258,13 +261,13 @@ function makeMap(metadata: Dictionary<string>, tiles: Terrain[][], sites: Site[]
 	let h = +metadata["height"]
 
 	if (tiles.length != h) {
-		console.log("!! Inconsistent map dimensions")
+		console.log(`!! Inconsistent map dimensions; found h: ${tiles.length}, expected: ${h}`)
 		return null
 	}
 
 	for (let tileRow of tiles) {
 		if (tileRow.length != w) {
-			console.log("!! Inconsistent map dimensions")
+			console.log(`!! Inconsistent map dimensions; found w: ${tileRow.length}, expected: ${w}`)
 			return null
 		}
 	}

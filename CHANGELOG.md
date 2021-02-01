@@ -1,6 +1,14 @@
 # Changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+### Fixed
+- rendering of unexplored sites in map
+- make game start waint on successful data loading (no arbitrary sleep)
+
+### Added
+- full-scale outdoor map
+
 ## [0.1.1]
 ### Added
 - map loading from file

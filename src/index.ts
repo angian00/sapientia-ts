@@ -4,6 +4,7 @@ import { loadAllData } from "./loaders/map_loader"
 
 
 async function gameLoop() {
+	await loadAllData()
 	let engine = new Engine()
 	
 	while (true) {
@@ -12,7 +13,4 @@ async function gameLoop() {
 }
 
 
-//DEBUG
-loadAllData()
-//
-window.setTimeout(gameLoop, 1500)
+window.setTimeout(gameLoop, 500)

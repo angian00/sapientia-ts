@@ -4,6 +4,7 @@ import { Terrain } from "./terrain"
 import { Entity, Actor, Site } from "./entities"
 import { getRandomInt } from "../util" 
 
+const UI_DEBUGGING = true
 
 export class GameMap {
 	name: string
@@ -30,7 +31,10 @@ export class GameMap {
 			this.explored.push([])
 			for (let y=0; y < height; y++) {
 				this.visible[x].push(false)
-				this.explored[x].push(false)
+				if (UI_DEBUGGING)
+					this.explored[x].push(true)
+				else
+					this.explored[x].push(false)
 			}
 		}
 	}
