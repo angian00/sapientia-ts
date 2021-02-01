@@ -55,7 +55,7 @@ export class GameInputHandler extends InputHandler {
 			} else if (keyCode in CONFIRM_KEYS) {
 				if (this.engine.map.visible[this.tileSelection[0]][this.tileSelection[1]])
 					this.engine.gameView.renderMapInfo(
-						this.engine.map.getEntities(this.tileSelection[0], this.tileSelection[1]))
+						this.engine.map.getEntitiesAt(this.tileSelection[0], this.tileSelection[1]))
 
 				this.compositeCommand = null
 				this.tileSelection = null

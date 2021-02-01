@@ -5,11 +5,15 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Fixed
 - rendering of unexplored sites in map
 - make game start waint on successful data loading (no arbitrary sleep)
+- excessive width of message panel
 
 ### Added
 - full-scale outdoor map
+- map tile info on mouse hover
+- made messageView scrollable
+- informative html pages, accessible via hamburger menu
 
-## [0.1.1]
+## [0.1.1] - 2021-01-31
 ### Added
 - map loading from file
 - restored navigation among multiple levels of map

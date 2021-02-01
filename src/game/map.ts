@@ -89,7 +89,7 @@ export class GameMap {
 	}
 
 
-	getEntities(x: number, y: number): Entity[] {
+	getEntitiesAt(x: number, y: number): Entity[] {
 		let result: Entity[] = []
 
 		for (let e of this.entities) {

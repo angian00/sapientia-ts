@@ -8,6 +8,28 @@
 </head>
 
 <body>
+	<script lang="javascript">
+		function toggleMenu() {
+			console.log("toggleMenu")
+
+			let menu = document.getElementById("linkMenu")
+			if (menu.style.display === "block") {
+				menu.style.display = "none";
+			} else {
+				menu.style.display = "block";
+			}
+		}
+	</script>
+
+	<div id="linkMenu">
+		<div>Antiqua Sapientia v0.1</div>
+		<a href="howto.html">How to Play</a>
+		<a href="about.html">About</a>
+	</div>
+
+	<button id="menuButton" onclick="toggleMenu()">&#x2630;</button>
+	<!--button id="menuButton" onclick="toggleMenu()">?</button-->
+
 	<h1>Antiqua Sapientia</h1>
 
 	<div id="flexContainer1">
@@ -26,7 +48,7 @@
 			<div id="conditionContainer"><span class="condition">[Poisoned]</span></div>
 		</div>
 
-		<div id="gameMessages">			
+		<div id="gameMessages">	
 		</div>
 	</div>
 

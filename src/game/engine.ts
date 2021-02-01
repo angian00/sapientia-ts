@@ -1,6 +1,6 @@
 import * as ROT from "rot-js"
 
-import { lightRadius } from "../layout"
+import { lightRadius, maxMapWidth, maxMapHeight } from "../layout"
 import { Actor } from "./entities"
 import { Action } from "./actions"
 import { makeActor, ActorType, makeItem, ItemType, } from "./entity_factory"
@@ -14,7 +14,6 @@ import { gameMaps } from "../loaders/map_loader"
 
 
 export class Engine {
-	//map = new GameMap(mapWidth, mapHeight)
 	map: GameMap
 	world: GameWorld
 
@@ -32,6 +31,7 @@ export class Engine {
 	constructor() {
 		console.log("Starting engine")
 		this.setInputHandler(new GameInputHandler(this))
+		this.setMouseHandler()
 
 		this.world = new GameWorld(this)
 
@@ -39,7 +39,6 @@ export class Engine {
 		this.addActor(this.player)
 		
 		this.world.pushMap(gameMaps["test_map_world"])
-		//this.map.place(this.player, 4, 4)
 
 		/*
 		//DEBUG: add a consumable item
@@ -113,6 +112,31 @@ export class Engine {
 		this.currEventListener = newInputHandler.eventListener
 		document.body.addEventListener("keydown", this.currEventListener)
 	}
+
+	setMouseHandler(): void {
+		document.body.addEventListener("mousemove", this.mouseEventListener.bind(this))
+	}
+
+	mouseEventListener(e: MouseEvent): void {
+		//console.log("mouseEventListener")
+		//console.log(`client coords: ${e.clientX}, ${e.clientY}`)
+		let mapElem = document.getElementById("gameMap")
+		let bRect = mapElem.getBoundingClientRect()
+		//console.log(`bRect: ${bRect}`)
+
+		let xPixels = e.clientX - bRect.left
+		let yPixels = e.clientY - bRect.top
+		//console.log(`net coords: ${x}, ${y}`)
+
+		const tileSize = 20
+		let xTiles = Math.floor(xPixels / tileSize)
+		let yTiles = Math.floor(yPixels / tileSize)
+		if ((xTiles >= 0 && xTiles < maxMapWidth && yTiles >= 0 && yTiles < maxMapHeight) &&
+			(this.map.visible[xTiles][yTiles]) ) {
+			this.gameView.renderMapInfo(this.map.getEntitiesAt(xTiles, yTiles))
+		}
+	}
+
 
 	transparency(x: number, y: number) {
 		if (x < 0 || x >= this.map.width || y < 0 || y >= this.map.height)
