@@ -15,4 +15,4 @@ async function gameLoop() {
 //DEBUG
 loadAllData()
 //
-window.setTimeout(gameLoop, 500)
+window.setTimeout(gameLoop, 1500)

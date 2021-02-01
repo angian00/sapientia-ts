@@ -1,34 +1,58 @@
 # TODO
 
-# release 0.1.1
-- configurable start player position in map
-- use map label
-- load multiple maps per file
+## Next releases
 
-? npc/monster loader
-
-
-# Improvements
-- spostare die da stats a actor
-- rendere corpses items
+### release 0.1.2
+- full-scale outdoor map
+- make game start depending on successful data loading
+- center small maps in canvas
 - fix flex-shrink stats panel
 - make messageView scrollable
-- interfaccia comando combine
-- unificare variabili map size in ts e css
-- stackable inventory items
 - uniform messageLog invocation
+- mouse info
+
+### release 0.1.x
+- publish on GitHub Pages
+- improve side info:
+	- hamburger menu
+	- about
+	- instructions
+	- version
 - find player image
-- find logo and favicon
-- centrare mappa quando dim < max dim
-- make game start depending on successful data loading
+- find/make logo and favicon
 
 
-# Features
-- mouse info panel
+### release 0.2
+- all item loaders
+- quests
+	- scouting (morrowind or skyrim wikis)
+	- state machine
+	- loading
+	- ? event notification/scripting
+	- journal ui
+
+
+## Unplanned
+### Improvements
+- combat
+	- move "die" from stats to actor
+	- make corpses items
+- inventory interaction
+	- "combine" command interface
+
+
+# Macro Features
+- loaders
+	- npc/monster
+	- herbs
+	- books
+	- relics
+	- quests
 - different screens:
 	- char info
-	- journal
-- containers
+- items
+	- containers
+	- stackable inventory items
 - quest state machine
 - experiments:
 	- base quest: retrieving Saint Thomas' Finger
@@ -36,8 +60,8 @@
 - npc interaction:
 	- trade
 	- dialogue
-- books, relics
 - outline game world:
 	- factions
 	- overall mission
+- test on different screen resolutions, browsers
 

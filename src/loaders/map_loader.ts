@@ -20,7 +20,7 @@ export async function loadAllData(): Promise<any> {
 	const mapFiles = [ "test_map_world.txt", "test_map_milano.txt" ]
 	//TODO: join promises
 	for (let f of mapFiles)
-		loadData(f, DataType.Map).then(map => { gameMaps[map.name] = map })
+		loadData(f, DataType.Map)
 }
 
 
@@ -33,7 +33,7 @@ export async function loadData(filename: string, dataType: DataType): Promise<an
 			parseFunction = parseTerrainDef
 			break
 		case DataType.Map:
-			parseFunction = parseMap
+			parseFunction = parseMaps
 			break
 		default:
 			parseFunction = null
@@ -98,20 +98,32 @@ enum MapSection {
 	SiteList,
 }
 
-function parseMap(text: string): GameMap {
+function parseMaps(text: string): void {
 	let lines: string[] = text.split("\n")
 	let tokens: string[]
 	let currSection: MapSection
-	let metadata = new Dictionary<string>()
 	let terrainCodes = new Dictionary<Terrain>()
-	let tiles: Terrain[][] = []
-	let sites: Site[] = []
+	let metadata: Dictionary<string>
+	let tiles: Terrain[][]
+	let sites: Site[]
 
 
 	for (let line of lines) {
 		if ((line.startsWith("#")) || line.trim() == "") {
 			//comment or blank line
 			continue
+
+		} else if (line.trim().toLowerCase() == "%%map") {
+			//end old map, start new map
+			if (metadata) {
+				let map = makeMap(metadata, tiles, sites)
+				if (map)
+					gameMaps[map.name] = map
+			}
+
+			metadata = new Dictionary<string>()
+			tiles = []
+			sites = []
 
 		} else if (line.startsWith("%")) {
 			let sectionName = line.substring(1).trim().toLowerCase()
@@ -221,7 +233,15 @@ function parseMap(text: string): GameMap {
 			}
 		}
 	}
-	
+
+	let map = makeMap(metadata, tiles, sites)
+	if (map)
+		gameMaps[map.name] = map
+}
+
+
+function makeMap(metadata: Dictionary<string>, tiles: Terrain[][], sites: Site[]): GameMap {
+
 	let mandatoryMetadata: string[] = ["name", "width", "height"]
 	for (let mm of mandatoryMetadata) {
 		if (!(mm in metadata)) {
@@ -231,6 +251,9 @@ function parseMap(text: string): GameMap {
 	}
 
 	let mapName = metadata["name"]
+	let mapLabel = metadata["label"]
+	if (!mapLabel)
+		mapLabel = mapName
 	let w = +metadata["width"]
 	let h = +metadata["height"]
 
@@ -246,7 +269,7 @@ function parseMap(text: string): GameMap {
 		}
 	}
 
-	let map = new GameMap(mapName, w, h, transpose<Terrain>(tiles))
+	let map = new GameMap(mapName, mapLabel, w, h, transpose<Terrain>(tiles))
 
 	for (let site of sites) {
 		site.parent = map
@@ -255,6 +278,7 @@ function parseMap(text: string): GameMap {
 
 	return map
 }
+
 
 function transpose<T>(orig: T[][]) {
 	let res: T[][] = []

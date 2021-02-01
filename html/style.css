@@ -72,6 +72,12 @@ h2 {
 	height: 720px;
 }
 
+#mapLabel {
+	width: 100%;
+	margin: 5px;
+	text-align: center;
+}
+
 #mapInfo {
 	flex-grow: 1;
 	border: 2px solid;

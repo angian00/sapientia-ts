@@ -7,6 +7,7 @@ import { getRandomInt } from "../util"
 
 export class GameMap {
 	name: string
+	label: string
 	width: number
 	height: number
 	tiles: Terrain[][]
@@ -15,8 +16,9 @@ export class GameMap {
 	explored: boolean[][]
 
 
-	constructor(name: string, width: number, height: number, tiles?: Terrain[][]) {
+	constructor(name: string, label: string, width: number, height: number, tiles?: Terrain[][]) {
 		this.name = name
+		this.label = label
 		this.width = width
 		this.height = height
 		this.tiles = tiles

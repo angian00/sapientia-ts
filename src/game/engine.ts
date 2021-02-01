@@ -30,7 +30,7 @@ export class Engine {
 
 
 	constructor() {
-		console.log("Game constructor")
+		console.log("Starting engine")
 		this.setInputHandler(new GameInputHandler(this))
 
 		this.world = new GameWorld(this)
@@ -91,7 +91,7 @@ export class Engine {
 	}
 
 	async processTurn(): Promise<void> {
-		console.log("processTurn")
+		//console.log("processTurn")
 
 		let currActor = <Actor>this.scheduler.next()
 		let actionResult = await currActor.act();

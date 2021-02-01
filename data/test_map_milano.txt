@@ -1,3 +1,4 @@
+%%map
 %metadata
 type:map
 subtype:town
