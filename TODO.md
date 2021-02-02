@@ -4,12 +4,9 @@
 
 
 ### release 0.1.3
-- bugfixing: mouse hover in smaller maps
-- find a good way to edit maps (import from image)
 - configurable start player position in maps
 - test on different screen resolutions, browsers
-- initial checks on screen resolution or other requirements
-
+- bugfixing: check regression in messageview width
 
 ### release 0.1.4
 - item loaders
@@ -54,3 +51,4 @@
 - outline game world:
 	- factions
 	- overall mission
+- initial player creation

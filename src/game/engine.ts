@@ -80,6 +80,7 @@ export class Engine {
 		this.gameView.renderStats(this.player.stats)
 
 		this.messageLog.addMessage("Welcome, adventurer!")
+		//this.messageLog.addMessage("This is a very very long message to test message view does not get too wide")
 		this.gameView.renderMessages(this.messageLog)
 	}
 

@@ -5,9 +5,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ### Fixed
 - mouse hover in smaller maps
+- regression in messageview width
 
 ### Added
 - script to generate map from image
+- initial checks on screen resolution and touch devices
 
 
 ## [0.1.2] - 2021-02-02
