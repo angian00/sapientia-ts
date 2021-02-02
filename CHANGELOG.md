@@ -12,6 +12,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - map tile info on mouse hover
 - made messageView scrollable
 - informative html pages, accessible via hamburger menu
+- player portrait
+- logo and favicon
 
 ## [0.1.1] - 2021-01-31
 ### Added

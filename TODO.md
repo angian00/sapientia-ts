@@ -4,8 +4,10 @@
 
 ### release 0.1.2
 - publish on GitHub Pages
-- find player image
-- find/make logo and favicon
+
+### release 0.1.3
+- bugfixing: mouse hover in smaller maps
+- find a good way to edit maps (import from image)
 
 
 ### release 0.2
@@ -25,7 +27,6 @@
 	- make corpses items
 - inventory interaction
 	- "combine" command interface
-- find a good way to edit maps (pixel editor?)
 - configurable start player position in maps
 
 # Macro Features
@@ -52,4 +53,4 @@
 	- overall mission
 - test on different screen resolutions, browsers
 - save/load game
-
+- initial checks on screen resolution or other requirements

@@ -36,8 +36,10 @@ h1 {
 	text-align: center;
 	font-family: 'magicmedieval';
 	font-size: 60px;
-	margin-top: 24px;
-	margin-bottom: 18px;
+	margin-top: 0.5em;
+	margin-bottom: 0.35em;
+	margin-left: 1em;
+	margin-right: 1em;
 	height: 6vh;
 }
 
@@ -70,6 +72,18 @@ h2 {
 	display: block;
 	padding: 10px;
 }
+
+#mainHeading {
+	width: 100%;
+	display: flex;
+	justify-content: center;
+}
+
+#mainHeading img {
+	width: 100px;
+	height: 100px;
+}
+
 
 #flexContainer1 {
 	width: 100%;
@@ -119,10 +133,10 @@ h2 {
 
 #statPortrait {
 	display: block;
-	width: 120px;
+	width: 180px;
 	height: 180px;
 	border-radius: 4px;
-	margin: 5px 60px;
+	margin: 5px auto;
 }
 
 #statName {
