@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<title>Antiqua Sapientia</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet" href="style.css">
+	<link rel="icon" href="/media/favicon.png" sizes="32x32">
+</head>
+
+<body>
+	<script lang="javascript">
+		function toggleMenu() {
+			console.log("toggleMenu")
+
+			let menu = document.getElementById("linkMenu")
+			if (menu.style.display === "block") {
+				menu.style.display = "none";
+			} else {
+				menu.style.display = "block";
+			}
+		}
+	</script>
+
+	<div id="linkMenu">
+		<div>Antiqua Sapientia</div>
+		<div>v0.1</div>
+		<a href="howto.html">How to Play</a>
+		<a href="about.html">About</a>
+	</div>
+
+	<button id="menuButton" onclick="toggleMenu()">&#x2630;</button>
+	<!--button id="menuButton" onclick="toggleMenu()">?</button-->
+
+	<div id="mainHeading">
+		<img src="media/logo_sapientia.png">
+		<h1>Antiqua Sapientia</h1>
+		<img src="media/logo_sapientia.png">
+	</div>
+
+	<div id="flexContainer1">
+		<div id="flexContainer2">
+			<div id="gameMap"></div>
+			<div id="mapLabel"></div>
+			<div id="mapInfo"></div>
+		</div>
+
+		<div id="playerStats">
+			<div><img id="statPortrait" src="media/knight_portrait.jpg"></div>
+			<div id="statName">Ulemor</div>
+			<div id="statHp">hp: 30/30</div>
+			<div id="statMana">mana: 8/10</div>
+			<div>&nbsp;</div>
+			<div id="conditionContainer"><span class="condition">[Poisoned]</span></div>
+		</div>
+
+		<div id="gameMessages">	
+		</div>
+	</div>
+
+	<div id="dialogContainer">
+		<div id="inventoryDialog">
+			<h2>Inventory</h2>
+			<hr />
+			<div id="inventoryContent"></div>
+		</div>
+	</div>
+
+	<script src="main.js"></script>
+</body>
+
+</html>
+

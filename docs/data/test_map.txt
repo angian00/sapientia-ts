@@ -1,0 +1,38 @@
+%metadata
+type:map
+subtype:outdoor
+name:test_map
+label:Test Map
+width:12
+height:10
+
+%terrain_codes
+1:mountains
+2:hills_2
+3:hills_1
+4:plains_2
+5:plains_1
+
+%tile_list
+# format: 
+# x -->
+# y 
+# |
+# v
+1|1|1|1|2|2|2|2|2|1|1|1
+1|1|2|2|3|3|3|3|3|2|2|2
+2|2|2|3|3|3|3|3|3|2|2|2
+3|3|3|4|4|4|4|3|3|3|2|2
+4|4|4|4|4|4|4|4|3|3|3|2
+4|4|4|4|4|4|4|4|4|4|3|3
+4|4|4|5|5|5|5|5|5|4|4|4
+4|4|4|5|5|5|5|5|5|5|4|4
+4|4|4|5|5|5|5|5|5|5|5|4
+4|4|4|5|5|5|5|5|5|5|5|5
+
+%item_list
+
+%site_list
+#format: 
+#name|pos_x|pos_y|[char]|[color]|[darkColor]|[map]
+Milano|4|6|+|blue|darkblue|
