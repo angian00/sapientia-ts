@@ -2,63 +2,63 @@ const path = require('path');
 const CopyPlugin = require("copy-webpack-plugin");
 
 
-module.exports = {
-	// bundling mode
-	//mode: 'production',
-	mode: 'development',
+module.exports = env => {
+	let bundlingMode = process.env.NODE_ENV || 'development'
+	console.log(`building mode: ${bundlingMode}`)
 
-	// entry files
-	entry: './src/index.ts',
+	return {
+		mode: bundlingMode,
 
-	// output bundles (location)
-	output: {
-		path: path.resolve(__dirname, 'dist'),
-		filename: 'main.js',
-		pathinfo: false
-	},
+		entry: './src/index.ts',
 
-	devtool: 'source-map',  // generate source map
+		output: {
+			path: path.resolve(__dirname, 'dist'),
+			filename: 'main.js',
+			pathinfo: false
+		},
 
-	optimization: {
-		removeAvailableModules: false,
-		removeEmptyChunks: false,
-		splitChunks: false,
-	},
+		devtool: 'source-map',
 
-	// file resolutions
-	resolve: {
-		extensions: ['.ts', '.js'],
-	},
+		optimization: {
+			removeAvailableModules: false,
+			removeEmptyChunks: false,
+			splitChunks: false,
+		},
 
-	// loaders
-	module: {
-		rules: [
-			{
-				test: /\.tsx?/,
-				exclude: /node_modules/,
-				use: [
-					{
-						loader: 'ts-loader',
-						options: {
-							transpileOnly: true,
-							experimentalWatchApi: true,
+		resolve: {
+			extensions: ['.ts', '.js'],
+		},
+
+		// loaders
+		module: {
+			rules: [
+				{
+					test: /\.tsx?/,
+					exclude: /node_modules/,
+					use: [
+						{
+							loader: 'ts-loader',
+							options: {
+								transpileOnly: true,
+								experimentalWatchApi: true,
+							},
 						},
-					},
-  				],
-			}
-		],
-	},
-
-	plugins: [
-		new CopyPlugin({
-			patterns: [
-				{ from: "html" },
-				{ from: "media", to: "media" },
-				{ from: "data", to: "data" },
+					],
+				}
 			],
-			options: {
-				concurrency: 100,
-			},
-		}),
-	],
+		},
+
+		plugins: [
+			new CopyPlugin({
+				patterns: [
+					{ from: "html" },
+					{ from: "media", to: "media" },
+					{ from: "data", to: "data" },
+				],
+				options: {
+					concurrency: 100,
+				},
+			}),
+		],
+	}
 };

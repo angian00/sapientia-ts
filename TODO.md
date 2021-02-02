@@ -2,8 +2,6 @@
 
 ## Next releases
 
-### release 0.1.2
-- publish on GitHub Pages
 
 ### release 0.1.3
 - bugfixing: mouse hover in smaller maps

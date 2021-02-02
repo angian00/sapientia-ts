@@ -14,6 +14,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 - informative html pages, accessible via hamburger menu
 - player portrait
 - logo and favicon
+- published site on GitHub Pages
+
 
 ## [0.1.1] - 2021-01-31
 ### Added
