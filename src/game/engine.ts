@@ -129,8 +129,8 @@ export class Engine {
 		//console.log(`net coords: ${x}, ${y}`)
 
 		const tileSize = 20
-		let xTiles = Math.floor(xPixels / tileSize)
-		let yTiles = Math.floor(yPixels / tileSize)
+		let xTiles = Math.floor(xPixels / tileSize) - this.map.xOffset
+		let yTiles = Math.floor(yPixels / tileSize) - this.map.yOffset
 		if ((xTiles >= 0 && xTiles < maxMapWidth && yTiles >= 0 && yTiles < maxMapHeight) &&
 			(this.map.visible[xTiles][yTiles]) ) {
 			this.gameView.renderMapInfo(this.map.getEntitiesAt(xTiles, yTiles))

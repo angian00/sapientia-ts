@@ -26,9 +26,6 @@ export class GameView {
 		//console.log("rendering map")
 		document.getElementById("mapLabel").textContent = map.label
 
-		let xOffset = Math.floor((maxMapWidth - map.width) / 2)
-		let yOffset = Math.floor((maxMapHeight - map.height) / 2)
-
 		let entityTiles = entities2tiles(map.width, map.height, map.entities)
 		display.clear()
 		
@@ -61,7 +58,7 @@ export class GameView {
 					}
 				}
 
-				display.draw(x + xOffset, y + yOffset, char, fgColor, bgColor);
+				display.draw(x + map.xOffset, y + map.yOffset, char, fgColor, bgColor);
 			}
 		}
 	}

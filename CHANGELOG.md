@@ -1,6 +1,15 @@
 # Changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
+## [Unreleased]
+
+### Fixed
+- mouse hover in smaller maps
+
+### Added
+- script to generate map from image
+
+
 ## [0.1.2] - 2021-02-02
 ### Fixed
 - rendering of unexplored sites in map

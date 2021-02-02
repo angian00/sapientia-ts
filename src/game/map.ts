@@ -3,6 +3,8 @@ import * as ROT from "rot-js"
 import { Terrain } from "./terrain"
 import { Entity, Actor, Site } from "./entities"
 import { getRandomInt } from "../util" 
+import { maxMapWidth, maxMapHeight } from "../layout"
+
 
 const UI_DEBUGGING = true
 
@@ -38,6 +40,14 @@ export class GameMap {
 			}
 		}
 	}
+
+	get xOffset(): number {
+		return Math.floor((maxMapWidth - this.width) / 2)
+	}
+	get yOffset(): number {
+		return Math.floor((maxMapHeight - this.height) / 2)
+	}
+
 
 	resetVisible(): void {
 		for (let x = 0; x < this.width; x++) {
