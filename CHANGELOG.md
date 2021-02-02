@@ -1,7 +1,7 @@
 # Changelog
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
-## [Unreleased]
+## [0.1.2] - 2021-02-02
 ### Fixed
 - rendering of unexplored sites in map
 - make game start waint on successful data loading (no arbitrary sleep)
