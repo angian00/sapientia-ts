@@ -1,6 +1,6 @@
 import { Entity, Actor, Item, Site } from "./entities"
 import { Engine } from "./engine"
-import { gameMaps } from "../loaders/map_loader"
+import { mapDefs } from "../loaders/map_loader"
 
 
 export interface ActionResult {
@@ -162,9 +162,9 @@ export class EnterMapAction extends DirectionAction {
 		this.engine.messageLog.addMessage(`Entering ${target.name}`)
 		this.actor.move(this.dx, this.dy)
 
-		if (!(target.mapName in gameMaps))
+		if (!(target.mapName in mapDefs))
 			return { success: false, reason: `Unknown map: [${target.mapName}]` }
-		this.engine.world.pushMap(gameMaps[target.mapName])
+		this.engine.world.pushMap(mapDefs[target.mapName])
 		
 		return { success: true }
 	}

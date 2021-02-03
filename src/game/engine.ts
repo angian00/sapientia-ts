@@ -10,7 +10,7 @@ import { MessageLog } from "./messageLog"
 import { BlockingQueue } from "../util"
 import { InputHandler, GameInputHandler } from "../ui/input_handlers"
 import { GameView, InventoryView } from "../ui/views"
-import { gameMaps } from "../loaders/map_loader"
+import { mapDefs, actorDefs } from "../loaders/map_loader"
 
 
 export class Engine {
@@ -35,11 +35,21 @@ export class Engine {
 
 		this.world = new GameWorld(this)
 
-		this.player = makeActor(this, ActorType.Player)
+		this.player = actorDefs["player"].clone()
+		console.log("player.stats")
+		console.log(this.player.stats)
+		this.player.engine = this
 		this.addActor(this.player)
 		
-		this.world.pushMap(gameMaps["test_map_world"])
-
+		let startMap = mapDefs["test_map_world"]
+		for (let e of startMap.entities) {
+			if (e instanceof Actor) {
+				e.engine = this
+				this.addActor(e)
+			}
+		}
+		this.world.pushMap(startMap)
+		
 		/*
 		//DEBUG: add a consumable item
 		let potion = makeItem(this, ItemType.PotionHealth)

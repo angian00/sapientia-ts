@@ -35,6 +35,9 @@ export abstract class AI {
 		}
 
 		let passableCallback = function (x: number, y: number): boolean {
+			if (x < 0 || x >= map.width || y < 0 || y >= map.height)
+				return false
+
 			return walkables[x][y]
 		}
 
@@ -53,11 +56,17 @@ export abstract class AI {
 	}
 
 	abstract chooseAction(): Promise<Action>
+
+	abstract clone(newParent: Actor): AI
 }
 
 
 export class EnemyAI extends AI {
 	path: [number, number][] = []
+
+	clone(newParent: Actor): EnemyAI {
+		return new EnemyAI(this.engine, newParent)
+	}
 
 	async chooseAction(): Promise<Action> {
 		console.log("EnemyAI.chooseAction")
@@ -92,5 +101,9 @@ export class EnemyAI extends AI {
 export class PlayerAI extends AI {
 	async chooseAction(): Promise<Action> {
 		return this.engine.playerActionQueue.dequeue()
+	}
+
+	clone(newParent: Actor): PlayerAI {
+		return new PlayerAI(this.engine, newParent)
 	}
 }

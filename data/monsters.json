@@ -1,0 +1,41 @@
+[
+	{
+		"name": "player",
+		"char": "@",
+		"color": "blue",
+		"stats": {
+			"hp": 30,
+			"baseDef": 2,
+			"baseAtt": 4
+		},
+		"inventorySize": 26,
+		"ai": "PlayerAI"
+	},
+
+	{
+		"name": "orc",
+		"char": "o",
+		"color": "#408040",
+		"stats": {
+			"hp": 10,
+			"baseDef": 0,
+			"baseAtt": 3
+		},
+		"inventorySize": 0,
+		"ai": "EnemyAI"
+	},
+
+	{
+		"name": "troll",
+		"char": "T",
+		"color": "#008000",
+		"stats": {
+			"hp": 16,
+			"baseDef": 1,
+			"baseAtt": 4
+		},
+		"inventorySize": 0,
+		"ai": "EnemyAI"
+	}
+]
+

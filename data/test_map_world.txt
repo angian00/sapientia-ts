@@ -80,6 +80,17 @@ Pavia|52|9|+|blue|darkblue|test_map_milano
 Prato|40|13|*|blue|darkblue|test_map_milano
 Lucca|20|24|+|blue|darkblue|test_map_milano
 
+%actor_list
+#format: 
+#name|pos_x|pos_y
+orc|10|10
+orc|10|12
+orc|10|8
+troll|12|14
+
+%item_list
+
+
 %%map
 %metadata
 type:map
@@ -108,8 +119,13 @@ height:4
 4|4|4|4
 
 
-%item_list
-
 %site_list
 #format: 
 #name|pos_x|pos_y|[char]|[color]|[darkColor]|[map]
+
+%actor_list
+#format: 
+#name|pos_x|pos_y
+
+%item_list
+

@@ -46,7 +46,7 @@ export class Entity {
 
 
 export class Actor extends Entity {
-	engine: Engine
+	private _engine: Engine
 	stats?: Stats
 	inventory?: Inventory
 	equipment?: Equipment
@@ -54,7 +54,46 @@ export class Actor extends Entity {
 
 	constructor(engine: Engine, name: string, char = "?", color = "black") {
 		super(name, char, color, true, RenderOrder.Actor)
-		this.engine = engine
+		this._engine = engine
+	}
+
+	get engine(): Engine {
+		return this._engine
+
+	}
+
+	set engine(engine: Engine) {
+		this._engine = engine
+
+		if (this.stats)
+			this.stats.engine = engine
+
+			if (this.inventory)
+			this.inventory.engine = engine
+
+		if (this.equipment)
+			this.equipment.engine = engine
+
+		if (this.ai)
+			this.ai.engine = engine
+	}
+
+	clone(): Actor {
+		let newActor = new Actor(this.engine, this.name, this.char, this.color)
+		newActor.x = this.x
+		newActor.y = this.y
+
+		if (this.inventory) {
+			newActor.inventory = this.inventory.clone(newActor)
+		} if (this.stats) {
+			newActor.stats = this.stats.clone(newActor)
+		} if (this.equipment) {
+			newActor.equipment = this.equipment.clone(newActor)
+		} if (this.ai) {
+			newActor.ai = this.ai.clone(newActor)
+		}
+
+		return newActor
 	}
 
 	async act() {
@@ -88,6 +127,11 @@ export class Item extends Entity {
 
 	constructor(name: string, char = "?", color = "black") {
 		super(name, char, color, false, RenderOrder.Item)
+	}
+
+	clone(newParent: Inventory | GameMap): Item {
+		//TODO: clone items
+		return this
 	}
 
 	use(): void {

@@ -1,22 +1,37 @@
 import { Terrain, TerrainAspect } from "../game/terrain"
-import { Site } from "../game/entities"
+import { Actor, Item, Site } from "../game/entities"
 import { GameMap } from "../game/map"
+import { Engine } from "../game/engine"
 import { Dictionary } from "../util"
+import { Stats } from "../components/stats"
+import { Inventory } from "../components/inventory"
+import { Equipment } from "../components/equipment"
+import { PlayerAI, EnemyAI } from "../components/ai"
+
 
 const dataDir = "./data"
 
 export var terrainDefs: Dictionary<Terrain>
-export var gameMaps = new Dictionary<GameMap>()
-
+export var mapDefs = new Dictionary<GameMap>()
+export var actorDefs = new Dictionary<Actor>()
 
 enum DataType {
 	TerrainDef,
 	Map,
+	Actor,
 }
 
 export async function loadAllData(): Promise<any> {
 	terrainDefs = await loadData("terrains.txt", DataType.TerrainDef)
-	
+
+	const actorFiles = ["monsters.json"]
+	let actorPromises: Promise<void>[] = []
+
+	for (let f of actorFiles)
+		actorPromises.push(loadData(f, DataType.Actor))
+
+	await actorPromises
+
 	const mapFiles = [ "test_map_world.txt", "test_map_milano.txt" ]
 	let promises: Promise<void>[] = []
 
@@ -36,7 +51,10 @@ export async function loadData(filename: string, dataType: DataType): Promise<an
 			parseFunction = parseTerrainDef
 			break
 		case DataType.Map:
-			parseFunction = parseMaps
+			parseFunction = parseMapDef
+			break
+		case DataType.Actor:
+			parseFunction = parseActorDef
 			break
 		default:
 			parseFunction = null
@@ -97,11 +115,12 @@ enum MapSection {
 	Metadata,
 	TerrainCodes,
 	TileList,
-	ItemList,
 	SiteList,
+	ActorList,
+	ItemList,
 }
 
-function parseMaps(text: string): void {
+function parseMapDef(text: string): void {
 	let lines: string[] = text.split("\n")
 	let tokens: string[]
 	let currSection: MapSection
@@ -109,6 +128,7 @@ function parseMaps(text: string): void {
 	let metadata: Dictionary<string>
 	let tiles: Terrain[][]
 	let sites: Site[]
+	let actors: Actor[]
 
 
 	for (let line of lines) {
@@ -119,14 +139,15 @@ function parseMaps(text: string): void {
 		} else if (line.trim().toLowerCase() == "%%map") {
 			//end old map, start new map
 			if (metadata) {
-				let map = makeMap(metadata, tiles, sites)
+				let map = makeMap(metadata, tiles, sites, actors)
 				if (map)
-					gameMaps[map.name] = map
+					mapDefs[map.name] = map
 			}
 
 			metadata = new Dictionary<string>()
 			tiles = []
 			sites = []
+			actors = []
 
 		} else if (line.startsWith("%")) {
 			let sectionName = line.substring(1).trim().toLowerCase()
@@ -136,10 +157,12 @@ function parseMaps(text: string): void {
 				currSection = MapSection.TerrainCodes
 			else if (sectionName === "tile_list")
 				currSection = MapSection.TileList
-			else if (sectionName === "item_list")
-				currSection = MapSection.ItemList
 			else if (sectionName === "site_list")
 				currSection = MapSection.SiteList
+			else if (sectionName === "actor_list")
+				currSection = MapSection.ActorList
+			else if (sectionName === "item_list")
+				currSection = MapSection.ItemList
 			else
 				console.log(`!! Invalid section name: ${sectionName}`)
 			
@@ -198,10 +221,6 @@ function parseMaps(text: string): void {
 
 					break
 
-				case MapSection.ItemList:
-					//TODO: MapSection.ItemList
-					break
-
 				case MapSection.SiteList:
 					//name | label | pos_x | pos_y | [char] | [map]
 					tokens = line.split("|")
@@ -231,19 +250,65 @@ function parseMaps(text: string): void {
 
 					break
 
+				case MapSection.ActorList:
+					//name | pos_x | pos_y
+					tokens = line.split("|")
+					if (tokens.length != 3) {
+						console.log(`!! Malformed actor record: [${line}]`)
+					} else {
+						let name = tokens[0]
+						let xPos = +tokens[1]
+						let yPos = +tokens[2]
+
+						let newActor = actorDefs[name].clone()
+						newActor.x = xPos
+						newActor.y = yPos
+						actors.push(newActor)
+					}
+					break
+
+				case MapSection.ItemList:
+					//TODO: MapSection.ItemList
+					break
+
+
 				default:
 					//do nothing
 			}
 		}
 	}
 
-	let map = makeMap(metadata, tiles, sites)
+	let map = makeMap(metadata, tiles, sites, actors)
 	if (map)
-		gameMaps[map.name] = map
+		mapDefs[map.name] = map
 }
 
 
-function makeMap(metadata: Dictionary<string>, tiles: Terrain[][], sites: Site[]): GameMap {
+function parseActorDef(text: string): void {
+	let engine: Engine = null
+	var dataObj = JSON.parse(text)
+
+	for (let dataItem of dataObj) {
+		//TODO: add validation
+		let actor = new Actor(engine, dataItem.name, dataItem.char, dataItem.color)
+		actor.stats = new Stats(engine, actor, +dataItem.stats.hp, +dataItem.stats.baseDef, +dataItem.stats.baseAtt)
+
+		if (dataItem.inventorySize) {
+			actor.inventory = new Inventory(engine, actor, +dataItem.inventorySize)
+			actor.equipment = new Equipment(engine, actor)
+		}
+
+		if (dataItem.ai == "PlayerAI")
+			actor.ai = new PlayerAI(engine, actor)
+		else if (dataItem.ai == "EnemyAI")
+			actor.ai = new EnemyAI(engine, actor)
+
+		actorDefs[actor.name] = actor
+	}
+}
+
+
+function makeMap(metadata: Dictionary<string>, tiles: Terrain[][], sites: Site[], actors: Actor[]): GameMap {
 
 	let mandatoryMetadata: string[] = ["name", "width", "height"]
 	for (let mm of mandatoryMetadata) {
@@ -279,9 +344,13 @@ function makeMap(metadata: Dictionary<string>, tiles: Terrain[][], sites: Site[]
 		map.entities.add(site)
 	}
 
+	for (let actor of actors) {
+		map.place(actor, actor.x, actor.y)
+	}
+
 	if ("startingX" in metadata && "startingY" in metadata)
 		map.startingPos = [+metadata["startingX"], +metadata["startingY"]]
-		
+
 	return map
 }
 
@@ -298,3 +367,6 @@ function transpose<T>(orig: T[][]) {
 
 	return res
 }
+
+
+

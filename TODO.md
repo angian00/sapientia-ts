@@ -4,20 +4,19 @@
 
 
 ### release 0.1.3
-- configurable start player position in maps
-
 - item loaders
-
-### release 0.1.4
-- test on different screen resolutions, browsers
-
+- combat
+	- move "die" from stats to actor
+	- make corpses items
 
 ### release 0.2
+- switch actors in and out of engine when switching map
 - save/load game
 	- global variables: 
 		- immutable data
 			- terrainDefs
 			- mapDefs
+			- actorDefs
 		- mutable data
 			- engine
 				- message log
@@ -35,9 +34,6 @@
 
 ## Unplanned
 ### Improvements
-- combat
-	- move "die" from stats to actor
-	- make corpses items
 - inventory interaction
 	- "combine" command interface
 

@@ -21,6 +21,16 @@ export class Equipment {
 			this.items[EquipmentType.Armor] = armor
 	}
 
+	clone(newParent: Actor): Equipment {
+		let newEquipment = new Equipment(this.engine, newParent)
+		for (let k in this.items) {
+			newEquipment.items[k] = this.items[k].clone(null)
+		}
+
+		return newEquipment
+	}
+
+
 	get bonusDef(): number {
 		let bonus = 0
 

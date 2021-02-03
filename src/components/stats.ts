@@ -21,6 +21,13 @@ export class Stats {
 		this.baseAtt = baseAtt
 	}
 	
+	clone(newParent: Actor): Stats {
+		let newStats = new Stats(this.engine, newParent, this.maxHp, this.baseDef, this.baseAtt)
+		newStats.hp = this.hp
+
+		return newStats
+	}
+
 	get hp(): number {
 		return this._hp
 	}
