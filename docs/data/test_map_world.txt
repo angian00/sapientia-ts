@@ -6,6 +6,9 @@ name:test_map_world
 label:World Map
 width:60
 height:36
+startingX:3
+startingY:4
+
 
 %terrain_codes
 1:mountains

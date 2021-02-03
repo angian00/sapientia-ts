@@ -122,11 +122,12 @@ h2 {
 }
 
 #playerStats {
-	flex: 1 1 auto;
+	flex: 1 0 auto;
 	margin: 10px;
 	border: 2px solid;
 	border-radius: 6px;
 	padding: 5px;
+	min-width: 240px;
 
 	font-size: larger;
 }
