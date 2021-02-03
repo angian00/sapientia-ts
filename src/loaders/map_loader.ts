@@ -279,6 +279,9 @@ function makeMap(metadata: Dictionary<string>, tiles: Terrain[][], sites: Site[]
 		map.entities.add(site)
 	}
 
+	if ("startingX" in metadata && "startingY" in metadata)
+		map.startingPos = [+metadata["startingX"], +metadata["startingY"]]
+		
 	return map
 }
 

@@ -5,15 +5,26 @@
 
 ### release 0.1.3
 - configurable start player position in maps
-- test on different screen resolutions, browsers
-- bugfixing: check regression in messageview width
+
+- item loaders
 
 ### release 0.1.4
-- item loaders
-- save/load game
+- test on different screen resolutions, browsers
 
 
 ### release 0.2
+- save/load game
+	- global variables: 
+		- immutable data
+			- terrainDefs
+			- mapDefs
+		- mutable data
+			- engine
+				- message log
+				- world (map stack)
+				- maps (visible, explored, entities)
+
+### release 0.3
 - quests
 	- scouting (morrowind or skyrim wikis)
 	- state machine

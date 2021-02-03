@@ -23,7 +23,10 @@ export class GameWorld {
 
 		this.mapStack.push({ "map": newMap, "pos": null })
 		this.engine.map = newMap
-		newMap.placeRandom(this.engine.player)
+		if (newMap.startingPos)
+			newMap.place(this.engine.player, newMap.startingPos[0], newMap.startingPos[1])
+		else
+			newMap.placeRandom(this.engine.player)
 	}
 
 	popMap(): void {

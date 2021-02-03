@@ -17,7 +17,8 @@ export class GameMap {
 	entities: Set<Entity> = new Set()
 	visible: boolean[][]
 	explored: boolean[][]
-
+	startingPos?: [number, number]
+	
 
 	constructor(name: string, label: string, width: number, height: number, tiles?: Terrain[][]) {
 		this.name = name

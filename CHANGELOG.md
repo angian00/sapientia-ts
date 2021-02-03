@@ -10,7 +10,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ### Added
 - script to generate map from image
 - initial checks on screen resolution and touch devices
-
+- configurable start player position in maps
 
 ## [0.1.2] - 2021-02-02
 ### Fixed
