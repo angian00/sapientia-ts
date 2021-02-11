@@ -2,13 +2,7 @@
 
 ## Next releases
 
-
-### release 0.1.3
-- item loaders
-
-
 ### release 0.2
-- switch actors in and out of engine when switching map
 - save/load game
 	- global variables: 
 		- immutable data

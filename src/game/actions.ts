@@ -23,8 +23,9 @@ export abstract class Action {
 export class WaitAction extends Action {
 	perform(): ActionResult {
 		//do nothing, spend a turn
-		if (this.engine.map.visible[this.actor.x][this.actor.x])
+		if (this.engine.map.visible[this.actor.x][this.actor.y]) {
 			this.engine.messageLog.addMessage(this.actor.name + " is waiting... ")
+		}
 
 		return { success: true }
 	}

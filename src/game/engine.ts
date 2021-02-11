@@ -97,6 +97,16 @@ export class Engine {
 		this.scheduler.remove(actor)
 	}
 
+	deactivateActors(): void {
+		this.scheduler.clear()
+	}
+
+	activateActors(): void {
+		for (let actor of this.map.entities) {
+			if (actor instanceof Actor)
+				this.scheduler.add(actor, true)
+		}
+	}
 
 	async processTurn(): Promise<void> {
 		//console.log("processTurn")

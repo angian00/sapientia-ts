@@ -13,7 +13,6 @@ import * as colors from "../ui/colors"
 
 export enum RenderOrder {
 	Site,
-	Corpse,
 	Item,
 	Actor
 }
@@ -139,6 +138,10 @@ export class Actor extends Entity {
 		let corpse = new Item(`remains of ${this.name}`, "%", corpseColor)
 		this.engine.map.place(corpse, this.x, this.y)
 		this.engine.removeActor(this)
+
+		//TODO: ask for a new game instead
+		if (this.engine.player == this)
+			this.engine.scheduler.clear()
 	}
 }
 

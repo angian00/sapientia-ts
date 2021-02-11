@@ -22,11 +22,15 @@ export class GameWorld {
 			this.mapStack[this.mapStack.length-1]["pos"] = [this.engine.player.x, this.engine.player.y]
 
 		this.mapStack.push({ "map": newMap, "pos": null })
+		this.engine.deactivateActors()
 		this.engine.map = newMap
+
 		if (newMap.startingPos)
 			newMap.place(this.engine.player, newMap.startingPos[0], newMap.startingPos[1])
 		else
 			newMap.placeRandom(this.engine.player)
+
+		this.engine.activateActors()
 	}
 
 	popMap(): void {
@@ -38,8 +42,10 @@ export class GameWorld {
 				actual: "this.currMap is null",
 			}
 
+		this.engine.deactivateActors()
 		let currPos = this.mapStack[this.mapStack.length-1]["pos"]
 		this.currMap.place(this.engine.player, currPos[0], currPos[1])
 		this.engine.map = this.currMap
+		this.engine.activateActors()
 	}
 }
