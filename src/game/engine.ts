@@ -7,7 +7,7 @@ import { makeActor, ActorType, makeItem, ItemType, } from "./entity_factory"
 import { GameMap } from "./map"
 import { GameWorld } from "./world"
 import { MessageLog } from "./messageLog"
-import { BlockingQueue } from "../util"
+import { BlockingQueue, removeFromList } from "../util"
 import { InputHandler, GameInputHandler } from "../ui/input_handlers"
 import { GameView, InventoryView } from "../ui/views"
 import { mapDefs, actorDefs } from "../loaders/map_loader"
@@ -71,16 +71,6 @@ export class Engine {
 		let herb2 = makeItem(this, ItemType.HerbNightshade)
 		this.map.place(herb2, 17, 10)
 		//
-
-		//DEBUG: add monsters
-		let orc = makeActor(this, ActorType.Orc)
-		this.addActor(orc)
-		this.map.place(orc, 22, 12)
-
-		let troll = makeActor(this, ActorType.Troll)
-		this.addActor(troll)
-		this.map.place(troll, 32, 12)
-		//
 */
 
 		this.fov.compute(this.player.x, this.player.y, lightRadius, this.setFov.bind(this))
@@ -99,6 +89,14 @@ export class Engine {
 		this.actors.push(actor)
 		this.scheduler.add(actor, true)
 	}
+
+	removeActor(actor: Actor): void {
+		removeFromList<Actor>(this.actors, actor)
+		this.map.entities.delete(actor)
+		//TODO: remove from all maps
+		this.scheduler.remove(actor)
+	}
+
 
 	async processTurn(): Promise<void> {
 		//console.log("processTurn")

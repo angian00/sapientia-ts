@@ -5,9 +5,7 @@
 
 ### release 0.1.3
 - item loaders
-- combat
-	- move "die" from stats to actor
-	- make corpses items
+
 
 ### release 0.2
 - switch actors in and out of engine when switching map

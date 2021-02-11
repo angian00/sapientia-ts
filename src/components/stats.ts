@@ -1,6 +1,5 @@
 import { Engine } from "../game/engine"
 import { Actor, RenderOrder } from "../game/entities"
-import * as colors from "../ui/colors"
 
 export class Stats {
 	engine: Engine
@@ -35,7 +34,7 @@ export class Stats {
 	set hp(newVal: number) {
 		this._hp = Math.max(0, Math.min(newVal, this.maxHp))
 		if (this._hp == 0 && this.parent.ai)
-			this.die()
+			this.parent.die()
 	}
 
 	get def(): number {
@@ -77,31 +76,5 @@ export class Stats {
 
 	takeDamage(amount: number): void {
 		this.hp -= amount
-	}
-
-
-	die(): void {
-		let deathMessage: string
-		let deathMessageClass: string
-
-		if (this.engine.player == this.parent) {
-			deathMessage = "\u271F you died"
-			deathMessageClass = "player-death"
-		} else {
-			deathMessage = `\u271F ${this.parent.name} is dead`
-			deathMessageClass = "enemy-death"
-		}
-
-		this.parent.name = `remains of ${this.parent.name}`
-		this.parent.char = "%"
-		this.parent.color = colors.playerDeath
-		this.parent.isBlocking = false
-		this.parent.renderOrder = RenderOrder.Corpse
-		this.parent.stats = null
-		this.parent.ai = null
-
-		this.engine.messageLog.addMessage(deathMessage, deathMessageClass)
-
-		//this.game.player.level.add_xp(this.parent.level.xp_given)
 	}
 }

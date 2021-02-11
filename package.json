@@ -1,6 +1,6 @@
 {
   "name": "sapientia-ts",
-  "version": "0.0.1",
+  "version": "0.1.3",
   "description": "",
   "main": "dist/main.js",
   "dependencies": {

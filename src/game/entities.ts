@@ -8,6 +8,7 @@ import { AI, PlayerAI } from "../components/ai"
 import { Consumable } from "../components/consumable"
 import { Equippable } from "../components/equippable"
 import { Combinable } from "../components/combinable"
+import * as colors from "../ui/colors"
 
 
 export enum RenderOrder {
@@ -114,6 +115,30 @@ export class Actor extends Entity {
 					break;
 			}
 		}
+	}
+
+	die(): void {
+		let deathMessage: string
+		let deathMessageClass: string
+		let corpseColor: string
+
+		if (this.engine.player == this) {
+			deathMessage = "\u271F you died"
+			deathMessageClass = "player-death"
+			corpseColor = colors.playerDeath
+		} else {
+			deathMessage = `\u271F ${this.name} is dead`
+			deathMessageClass = "enemy-death"
+			corpseColor = colors.enemyDeath
+		}
+
+		this.engine.messageLog.addMessage(deathMessage, deathMessageClass)
+
+		//this.game.player.level.add_xp(this.parent.level.xp_given)
+
+		let corpse = new Item(`remains of ${this.name}`, "%", corpseColor)
+		this.engine.map.place(corpse, this.x, this.y)
+		this.engine.removeActor(this)
 	}
 }
 
