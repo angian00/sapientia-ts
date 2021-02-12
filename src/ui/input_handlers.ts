@@ -1,10 +1,10 @@
 
-import { Action, BumpAction, WaitAction, PickupAction, DropAction, 
+import { BumpAction, WaitAction, PickupAction, DropAction, 
 	UseAction, EquipAction, CombineAction } from "../game/actions"
 import { Engine } from "../game/engine"
-import { Dictionary } from "../util"
 import { Item } from "../game/entities"
-
+import { Dictionary } from "../util"
+import { SavedGamesManager } from "../loaders/game_persistence"
 
 export abstract class InputHandler {
 	engine: Engine
@@ -22,6 +22,7 @@ export abstract class InputHandler {
 export class GameInputHandler extends InputHandler {
 	compositeCommand?: string
 	tileSelection?: [number, number]
+	savedGames = new SavedGamesManager()
 
 
 	handleEvent(e: KeyboardEvent): void {
@@ -47,19 +48,19 @@ export class GameInputHandler extends InputHandler {
 				let [dx, dy] = move
 				x += dx * moveMulti
 				y += dy * moveMulti
-				x = Math.max(0, Math.min(x, this.engine.map.width - 1))
-				y = Math.max(0, Math.min(y, this.engine.map.height - 1))
+				x = Math.max(0, Math.min(x, this.engine.currMap.width - 1))
+				y = Math.max(0, Math.min(y, this.engine.currMap.height - 1))
 				this.tileSelection = [x, y]
-				this.engine.gameView.renderMap(this.engine.map, this.tileSelection)
+				this.engine.gameView.renderMap(this.engine.currMap, this.tileSelection)
 
 			} else if (keyCode in CONFIRM_KEYS) {
-				if (this.engine.map.visible[this.tileSelection[0]][this.tileSelection[1]])
+				if (this.engine.currMap.visible[this.tileSelection[0]][this.tileSelection[1]])
 					this.engine.gameView.renderMapInfo(
-						this.engine.map.getEntitiesAt(this.tileSelection[0], this.tileSelection[1]))
+						this.engine.currMap.getEntitiesAt(this.tileSelection[0], this.tileSelection[1]))
 
 				this.compositeCommand = null
 				this.tileSelection = null
-				this.engine.gameView.renderMap(this.engine.map)
+				this.engine.gameView.renderMap(this.engine.currMap)
 			}
 
 		} else {
@@ -77,7 +78,7 @@ export class GameInputHandler extends InputHandler {
 			} else if (keyCode == "KeyL") {
 				this.compositeCommand = keyCode
 				this.tileSelection = [this.engine.player.x, this.engine.player.y] 
-				this.engine.gameView.renderMap(this.engine.map, this.tileSelection)
+				this.engine.gameView.renderMap(this.engine.currMap, this.tileSelection)
 
 			} else if (keyCode == "KeyI") {
 				let itemMap = engine.inventoryView.render(engine.player.inventory, engine.player.equipment)
@@ -87,10 +88,22 @@ export class GameInputHandler extends InputHandler {
 				document.getElementById("dialogContainer").style.display = "block";
 				document.getElementById("inventoryDialog").style.display = "block";
 
-	/*		} elseif (keyCode == "KeyD") {
-				return InventoryDropHandler(self.engine)
-			}
-	*/
+			/*		} elseif (keyCode == "KeyD") {
+						return InventoryDropHandler(self.engine)
+					}
+			*/
+
+			} else if (keyCode == "KeyS") {
+				//this.savedGames.saveGame("prova", engine, 
+				//	() => { alert(`Game saved`) })
+				this.savedGames.getGameList( gameList => {
+					engine.saveGameView.render(gameList)
+					let saveGameInputHandler = new SaveGameInputHandler(gameList)
+					engine.setInputHandler(saveGameInputHandler)
+
+					document.getElementById("dialogContainer").style.display = "block";
+					document.getElementById("saveGameDialog").style.display = "block";
+				})
 			}
 		}
 
@@ -193,7 +206,7 @@ export class InventoryInputHandler extends InputHandler {
 		
 		engine.setInputHandler(new GameInputHandler(engine))
 
-		engine.gameView.renderMap(engine.map)
+		engine.gameView.renderMap(engine.currMap)
 		engine.gameView.renderStats(engine.player.stats)
 		engine.gameView.renderMessages(engine.messageLog)
 		document.getElementById("dialogContainer").style.display = "none";

@@ -14,11 +14,12 @@ import { mapDefs, actorDefs } from "../loaders/map_loader"
 
 
 export class Engine {
-	map: GameMap
+	currMap: GameMap
 	world: GameWorld
 
 	actors: Actor[] = []
 	player: Actor
+	exploredMaps = new Set<string>()
 	messageLog = new MessageLog()
 	scheduler = new ROT.Scheduler.Simple()
 	playerActionQueue = new BlockingQueue<Action>()
@@ -34,22 +35,21 @@ export class Engine {
 		this.setMouseHandler()
 
 		this.world = new GameWorld(this)
+	}
 
+	newGame(): void {
 		this.player = actorDefs["player"].clone()
-		console.log("player.stats")
-		console.log(this.player.stats)
 		this.player.engine = this
-		this.addActor(this.player)
-		
+
 		let startMap = mapDefs["test_map_world"]
+		//TODO: move to pushMap
 		for (let e of startMap.entities) {
 			if (e instanceof Actor) {
 				e.engine = this
-				this.addActor(e)
 			}
 		}
 		this.world.pushMap(startMap)
-		
+
 		/*
 		//DEBUG: add a consumable item
 		let potion = makeItem(this, ItemType.PotionHealth)
@@ -71,28 +71,15 @@ export class Engine {
 		let herb2 = makeItem(this, ItemType.HerbNightshade)
 		this.map.place(herb2, 17, 10)
 		//
-*/
-
+	*/
 		this.fov.compute(this.player.x, this.player.y, lightRadius, this.setFov.bind(this))
 
-		this.gameView.renderMap(this.map)
-		this.gameView.renderMapInfo()
-		this.gameView.renderStats(this.player.stats)
-
 		this.messageLog.addMessage("Welcome, adventurer!")
-		//this.messageLog.addMessage("This is a very very long message to test message view does not get too wide")
-		this.gameView.renderMessages(this.messageLog)
 	}
 
-
-	addActor(actor: Actor): void {
-		this.actors.push(actor)
-		this.scheduler.add(actor, true)
-	}
 
 	removeActor(actor: Actor): void {
-		removeFromList<Actor>(this.actors, actor)
-		this.map.entities.delete(actor)
+		this.currMap.entities.delete(actor)
 		//TODO: remove from all maps
 		this.scheduler.remove(actor)
 	}
@@ -101,9 +88,12 @@ export class Engine {
 		this.scheduler.clear()
 	}
 
+	/** Player is added first */
 	activateActors(): void {
-		for (let actor of this.map.entities) {
-			if (actor instanceof Actor)
+		this.scheduler.add(this.player, true)
+
+		for (let actor of this.currMap.entities) {
+			if (actor instanceof Actor && actor.name != "player")
 				this.scheduler.add(actor, true)
 		}
 	}
@@ -112,12 +102,15 @@ export class Engine {
 		//console.log("processTurn")
 
 		let currActor = <Actor>this.scheduler.next()
+		if (!currActor)
+			return
+
 		let actionResult = await currActor.act();
 
-		this.map.resetVisible()
+		this.currMap.resetVisible()
 		this.fov.compute(this.player.x, this.player.y, lightRadius, this.setFov.bind(this))
 
-		this.gameView.renderMap(this.map)
+		this.gameView.renderMap(this.currMap)
 		this.gameView.renderMapInfo()
 		this.gameView.renderStats(this.player.stats)
 		this.gameView.renderMessages(this.messageLog)
@@ -137,6 +130,9 @@ export class Engine {
 	}
 
 	mouseEventListener(e: MouseEvent): void {
+		if (!this.currMap)
+			return
+
 		//console.log("mouseEventListener")
 		//console.log(`client coords: ${e.clientX}, ${e.clientY}`)
 		let mapElem = document.getElementById("gameMap")
@@ -148,28 +144,29 @@ export class Engine {
 		//console.log(`net coords: ${x}, ${y}`)
 
 		const tileSize = 20
-		let xTiles = Math.floor(xPixels / tileSize) - this.map.xOffset
-		let yTiles = Math.floor(yPixels / tileSize) - this.map.yOffset
+		let xTiles = Math.floor(xPixels / tileSize) - this.currMap.xOffset
+		let yTiles = Math.floor(yPixels / tileSize) - this.currMap.yOffset
+
 		if ((xTiles >= 0 && xTiles < maxMapWidth && yTiles >= 0 && yTiles < maxMapHeight) &&
-			(this.map.visible[xTiles][yTiles]) ) {
-			this.gameView.renderMapInfo(this.map.getEntitiesAt(xTiles, yTiles))
+			(this.currMap.visible[xTiles][yTiles]) ) {
+			this.gameView.renderMapInfo(this.currMap.getEntitiesAt(xTiles, yTiles))
 		}
 	}
 
 
 	transparency(x: number, y: number) {
-		if (x < 0 || x >= this.map.width || y < 0 || y >= this.map.height)
+		if (x < 0 || x >= this.currMap.width || y < 0 || y >= this.currMap.height)
 			return false
 		else
-			return this.map.tiles[x][y].transparent
+			return this.currMap.tiles[x][y].transparent
 	}
 
 	setFov(x: number, y: number, r: number, visibility: number) {
-		if (x < 0 || x >= this.map.width || y < 0 || y >= this.map.height)
+		if (x < 0 || x >= this.currMap.width || y < 0 || y >= this.currMap.height)
 			return
 		
-		this.map.visible[x][y] = !!visibility
-		if (this.map.visible[x][y])
-			this.map.explored[x][y] = true
+		this.currMap.visible[x][y] = !!visibility
+		if (this.currMap.visible[x][y])
+			this.currMap.explored[x][y] = true
 	}
 }

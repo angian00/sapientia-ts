@@ -42,6 +42,28 @@ export class Entity {
 		this.x += dx
 		this.y += dy
 	}
+
+	toObject(): any {
+		return {
+			name: this.name,
+			char: this.char,
+			color: this.color,
+			renderOrder: this.renderOrder,
+			x: this.x,
+			y: this.y,
+		}
+	}
+
+	static fromObject(obj: any): Entity {
+		if (obj.subclass == "Actor")
+			return Actor.fromObject(obj)
+		else if (obj.subclass == "Item")
+			return Item.fromObject(obj)
+		else if (obj.subclass == "Site")
+			return Site.fromObject(obj)
+		else
+			return null
+	}
 }
 
 
@@ -78,24 +100,6 @@ export class Actor extends Entity {
 			this.ai.engine = engine
 	}
 
-	clone(): Actor {
-		let newActor = new Actor(this.engine, this.name, this.char, this.color)
-		newActor.x = this.x
-		newActor.y = this.y
-
-		if (this.inventory) {
-			newActor.inventory = this.inventory.clone(newActor)
-		} if (this.stats) {
-			newActor.stats = this.stats.clone(newActor)
-		} if (this.equipment) {
-			newActor.equipment = this.equipment.clone(newActor)
-		} if (this.ai) {
-			newActor.ai = this.ai.clone(newActor)
-		}
-
-		return newActor
-	}
-
 	async act() {
 		if (this.ai) {
 			while (true) {
@@ -110,7 +114,7 @@ export class Actor extends Entity {
 				}
 
 				//only monsters waste a turn on failed actions
-				if (actionResult.success || !(this.ai instanceof PlayerAI) )
+				if (actionResult.success || !(this.ai instanceof PlayerAI))
 					break;
 			}
 		}
@@ -136,13 +140,82 @@ export class Actor extends Entity {
 		//this.game.player.level.add_xp(this.parent.level.xp_given)
 
 		let corpse = new Item(`remains of ${this.name}`, "%", corpseColor)
-		this.engine.map.place(corpse, this.x, this.y)
+		this.engine.currMap.place(corpse, this.x, this.y)
 		this.engine.removeActor(this)
 
 		//TODO: ask for a new game instead
 		if (this.engine.player == this)
 			this.engine.scheduler.clear()
 	}
+
+
+	clone(): Actor {
+		let newActor = new Actor(this.engine, this.name, this.char, this.color)
+		newActor.x = this.x
+		newActor.y = this.y
+
+		if (this.stats)
+			newActor.stats = this.stats.clone(newActor)
+		
+		if (this.ai)
+			newActor.ai = this.ai.clone(newActor)
+
+		if (this.inventory)
+			newActor.inventory = this.inventory.clone(newActor)
+
+		if (this.equipment)
+			newActor.equipment = this.equipment.clone(newActor)
+
+		return newActor
+	}
+
+	toObject(): any {
+		let res = super.toObject()
+		res.subclass = "Actor"
+
+		if (this.stats)
+			res.stats = this.stats.toObject()
+
+		if (this.ai)
+			res.ai = this.ai.toObject()
+
+		if (this.inventory)
+			res.inventory = this.inventory.toObject()
+
+		if (this.equipment)
+			res.equipment = this.equipment.toObject()
+
+		return res
+	}
+
+	static fromObject(obj: any): Actor {
+		let newActor = new Actor(null, obj.name, obj.char, obj.color)
+		newActor.x = obj.x
+		newActor.y = obj.y
+
+		if (obj.stats) {
+			newActor.stats = Stats.fromObject(obj.stats)
+			newActor.stats.parent = newActor
+		}
+
+		if (obj.ai) {
+			newActor.ai = AI.fromObject(obj.ai)
+			newActor.ai.parent = newActor
+		}
+
+		if (obj.inventory) {
+			newActor.inventory = Inventory.fromObject(obj.inventory)
+			newActor.inventory.parent = newActor
+		}
+
+		if (obj.equipment) {
+			newActor.equipment = Equipment.fromObject(obj.equipment)
+			newActor.equipment.parent = newActor
+		}
+
+		return newActor
+	}
+
 }
 
 
@@ -157,13 +230,27 @@ export class Item extends Entity {
 		super(name, char, color, false, RenderOrder.Item)
 	}
 
+
+	use(): void {
+
+	}
+
 	clone(newParent: Inventory | GameMap): Item {
 		//TODO: clone items
 		return this
 	}
 
-	use(): void {
+	toObject(): any {
+		let res = super.toObject()
+		res.subclass = "Item"
 
+		return res
+
+	}
+
+	static fromObject(obj: any): Item {
+		//TODO: Item.fromObject
+		return null
 	}
 }
 
@@ -177,5 +264,23 @@ export class Site extends Entity {
 		super(name, char, color, false, RenderOrder.Site)
 		this.darkColor = darkColor
 		this.mapName = mapName
+	}
+
+	toObject(): any {
+		let res = super.toObject()
+		res.subclass = "Site"
+		res.darkColor = this.darkColor
+		res.mapName = this.mapName
+
+		return res
+	}
+
+	static fromObject(obj: any): Site {
+		let newSite = new Site(obj.name, obj.char, obj.color, obj.darkColor, obj.mapName)
+
+		newSite.x = +obj.x
+		newSite.y = +obj.y
+
+		return newSite
 	}
 }

@@ -19,7 +19,7 @@ export abstract class AI {
 	 * If there is no valid path then returns an empty list.
 	 */
 	getPathTo(destX: number, destY: number): [number, number][] {
-		let map = this.engine.map
+		let map = this.engine.currMap
 		let walkables: boolean[][] = []
 
 		for (let x=0; x < map.width; x++) {
@@ -58,6 +58,16 @@ export abstract class AI {
 	abstract chooseAction(): Promise<Action>
 
 	abstract clone(newParent: Actor): AI
+	abstract toObject(): any
+
+	static fromObject(obj: any): AI {
+		if (obj == "EnemyAI")
+			return new EnemyAI(null, null)
+		else if (obj == "PlayerAI")
+			return new PlayerAI(null, null)
+		else
+			return null
+	}
 }
 
 
@@ -76,7 +86,7 @@ export class EnemyAI extends AI {
 		let dy = target.y - this.parent.y
 		let distance = Math.max(Math.abs(dx), Math.abs(dy))
 
-		if (this.engine.map.visible[this.parent.x][this.parent.y]) {
+		if (this.engine.currMap.visible[this.parent.x][this.parent.y]) {
 			//if monster is visible to player, 
 			//then player is visible to monster
 			if (distance <= 1)
@@ -95,6 +105,10 @@ export class EnemyAI extends AI {
 
 		return new WaitAction(this.engine, this.parent)
 	}
+
+	toObject(): any {
+		return "EnemyAI"
+	}
 }
 
 
@@ -105,5 +119,9 @@ export class PlayerAI extends AI {
 
 	clone(newParent: Actor): PlayerAI {
 		return new PlayerAI(this.engine, newParent)
+	}
+
+	toObject(): any {
+		return "PlayerAI"
 	}
 }

@@ -18,6 +18,21 @@ export class Message {
 
 		return this.plainText
 	}
+
+	clone(): Message {
+		let newInstance = new Message(this.plainText, this.cssClass) 
+		newInstance.count = this.count
+
+		return newInstance
+	}
+
+	static fromObject(obj: any): Message {
+		let newInstance = new Message(obj["plainText"], obj["cssClass"])
+		newInstance.count = +obj["count"]
+
+		return newInstance
+	}
+
 }
 
 
@@ -30,5 +45,21 @@ export class MessageLog {
 			this.messages[this.messages.length-1].count += 1
 		else
 			this.messages.push(new Message(text, cssClass))
+	}
+
+	clone(): MessageLog {
+		let newInstance = new MessageLog()
+		for (let m of this.messages)
+			newInstance.messages.push(m.clone())
+
+		return newInstance
+	}
+
+	static fromObject(obj: any): MessageLog {
+		let newInstance = new MessageLog()
+		for (let mObj of obj.messages)
+			newInstance.messages.push(Message.fromObject(mObj))
+
+		return newInstance		
 	}
 }

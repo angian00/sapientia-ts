@@ -23,7 +23,7 @@ export abstract class Action {
 export class WaitAction extends Action {
 	perform(): ActionResult {
 		//do nothing, spend a turn
-		if (this.engine.map.visible[this.actor.x][this.actor.y]) {
+		if (this.engine.currMap.visible[this.actor.x][this.actor.y]) {
 			this.engine.messageLog.addMessage(this.actor.name + " is waiting... ")
 		}
 
@@ -38,7 +38,7 @@ export class PickupAction extends Action {
 		let actorY = this.actor.y
 		let inventory = this.actor.inventory
 
-		for (let e of this.engine.map.entities) {
+		for (let e of this.engine.currMap.entities) {
 			if (!(e instanceof Item))
 				continue
 
@@ -49,7 +49,7 @@ export class PickupAction extends Action {
 			if (inventory.items.size >= inventory.capacity)
 				return { success: false, reason: `${this.actor.name} inventory is full` }
 
-			this.engine.map.entities.delete(item)
+			this.engine.currMap.entities.delete(item)
 
 			item.parent = this.actor.inventory
 			inventory.items.add(item)
@@ -85,12 +85,12 @@ abstract class DirectionAction extends Action {
 
 	/** Return the actor at this actions destination */
 	get targetActor(): Actor {
-		return this.engine.map.getActorAt(this.destXY[0], this.destXY[1])
+		return this.engine.currMap.getActorAt(this.destXY[0], this.destXY[1])
 	}
 
 	/** Return the site at this actions destination */
 	get targetSite(): Site {
-		return this.engine.map.getSiteAt(this.destXY[0], this.destXY[1])
+		return this.engine.currMap.getSiteAt(this.destXY[0], this.destXY[1])
 	}
 
 	abstract perform(): ActionResult
@@ -139,13 +139,13 @@ export class MovementAction extends DirectionAction {
 	perform(): ActionResult {
 		let [destX, destY] = this.destXY
 
-		if (!this.engine.map.inBounds(destX, destY))
+		if (!this.engine.currMap.inBounds(destX, destY))
 			return (new ExitMapAction(this.engine, this.actor, this.dx, this.dy)).perform()
 
-		if (!this.engine.map.tiles[destX][destY].walkable)
+		if (!this.engine.currMap.tiles[destX][destY].walkable)
 			return { success: false, reason: "That way is blocked" }
 
-		if (this.engine.map.getBlockingEntityAt(destX, destY))
+		if (this.engine.currMap.getBlockingEntityAt(destX, destY))
 			return { success: false, reason: "That way is blocked" }
 
 		this.actor.move(this.dx, this.dy)
@@ -202,7 +202,7 @@ export abstract class ItemAction extends Action {
 
 	/** Return the actor at this actions destination */
 	get targetActor(): Actor {
-		return this.engine.map.getActorAt(this.targetXY[0], this.targetXY[1])
+		return this.engine.currMap.getActorAt(this.targetXY[0], this.targetXY[1])
 	}
 
 	abstract perform(): ActionResult

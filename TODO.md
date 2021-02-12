@@ -3,17 +3,7 @@
 ## Next releases
 
 ### release 0.2
-- save/load game
-	- global variables: 
-		- immutable data
-			- terrainDefs
-			- mapDefs
-			- actorDefs
-		- mutable data
-			- engine
-				- message log
-				- world (map stack)
-				- maps (visible, explored, entities)
+- save/load/delete game UI
 
 ### release 0.3
 - quests

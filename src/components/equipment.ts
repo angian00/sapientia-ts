@@ -21,15 +21,6 @@ export class Equipment {
 			this.items[EquipmentType.Armor] = armor
 	}
 
-	clone(newParent: Actor): Equipment {
-		let newEquipment = new Equipment(this.engine, newParent)
-		for (let k in this.items) {
-			newEquipment.items[k] = this.items[k].clone(null)
-		}
-
-		return newEquipment
-	}
-
 
 	get bonusDef(): number {
 		let bonus = 0
@@ -105,6 +96,34 @@ export class Equipment {
 			this.unequip(item.equippable.equipmentType, addMessage)
 		else
 			this.equip(item, item.equippable.equipmentType, addMessage)
+	}
+
+
+	clone(newParent: Actor): Equipment {
+		let newEquipment = new Equipment(this.engine, newParent)
+		for (let k in this.items) {
+			newEquipment.items[k] = this.items[k].clone(null)
+		}
+
+		return newEquipment
+	}
+
+	toObject(): any {
+		let itemObjs = new Dictionary<any>()
+		for (let k in this.items) {
+			itemObjs[k] = this.items[k].toObject()
+		}
+
+		return itemObjs
+	}
+
+	static fromObject(obj: any): Equipment {
+		let newEquipment = new Equipment(null, null)
+		for (let k in obj) {
+			newEquipment.items[k] = Item.fromObject(obj[k])
+		}
+
+		return newEquipment
 	}
 }
 

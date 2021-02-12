@@ -14,9 +14,7 @@ import { maxMapWidth, maxMapHeight } from "../layout"
 
 let display: ROT.Display;
 
-
 export class GameView {
-
 	constructor() {
 		if (!display)
 			display = initDisplay()

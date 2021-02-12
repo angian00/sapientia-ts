@@ -126,6 +126,11 @@ export class GameMap {
 		this.place(entity, x, y)
 	}
 
-
+	removePlayer(): void {
+		for (let e of this.entities) {
+			if (e.name == "player")
+				this.entities.delete(e)
+		}
+	}
 
 }

@@ -77,4 +77,21 @@ export class Stats {
 	takeDamage(amount: number): void {
 		this.hp -= amount
 	}
+
+	toObject(): any {
+		return {
+			maxHp: this.maxHp,
+			hp: this._hp,
+			baseDef: this.baseDef,
+			baseAtt: this.baseAtt,
+		}
+	}
+
+	static fromObject(obj: any): Stats {
+		let newStats = new Stats(null, null, +obj.maxHp, +obj.baseDef, +obj.baseAtt)
+		newStats.hp = +obj.hp
+
+		return newStats
+	}
+
 }
