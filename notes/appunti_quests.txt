@@ -1,0 +1,35 @@
+## Morrowind
+
+- script associati a oggetti
+- variabili OnActivate, OnPCEquip, etc.
+- linguaggio molto scarno, quasi tutto dentro le funzioni
+
+Le quest sono associate a journal entries con (journalId, state, text)
+
+---------------------------
+
+Idea: struttura a event handler
+es.
+
+MagicalHerbScript {
+	onPlayerInventory() {
+		if (getQuestState("test_quest_01") == 10)
+			setQuestState("test_quest_01", 20)
+	}
+
+	onActorInventory(actor) {
+		if (actor.name == "WiseMan")
+			setQuestState("test_quest_01", 40)
+	}
+}
+
+
+quest definition(.json):
+{
+	"name": "test_quest_01",
+	"states": {
+		10: "You must retrieve a magical herb and return it to WiseMan",
+		20: "You have found the magical herb",
+		40: "You have given the magical herb to WiseMan"
+	}
+}
