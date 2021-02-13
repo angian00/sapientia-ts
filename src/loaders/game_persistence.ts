@@ -51,17 +51,19 @@ export class SavedGamesManager {
 		this.initDb()
 	}
 
-	getGameList(callback: { (gameList: string[]): void }): void {
-		let gameList = new Array<string>()
+	getGameList(callback: { (savedGames: { gameName: string, ts: number }[]): void }): void {
+		let gameList = new Array<{ gameName: string, ts: number }>()
 
 		let objStore = this.db.transaction(["savedGames"], "readwrite").objectStore("savedGames")
 		let req = objStore.openCursor()
 		req.onsuccess = (event) => {
 			let cursor = req.result
 			if (cursor) {
-				gameList.push(cursor.value.gameName)
+				gameList.push({ gameName: cursor.value.gameName, ts: cursor.value.ts })
 				cursor.continue()
 			} else {
+				//sort by ts desc
+				gameList.sort((a, b) => (a.ts < b.ts) ? 1 : ((a.ts > b.ts) ? -1 : 0))
 				callback(gameList)
 			}
 		}
@@ -123,7 +125,7 @@ export class SavedGamesManager {
 		let objStore = this.db.transaction(["savedGames"], "readonly").objectStore("savedGames")
 		let req = objStore.get(gameName)
 		req.onerror = (event) => {
-			console.log("!! Could not save game")
+			console.log("!! Could not load game")
 			console.log(event)
 		}
 
@@ -131,6 +133,8 @@ export class SavedGamesManager {
 			console.log("Game data successfully retrieved")
 			let gameData = req.result.data
 			console.log(gameData)
+
+			engine.deactivateActors()
 
 			// message log
 			engine.messageLog = MessageLog.fromObject(gameData.messageLog)
@@ -173,6 +177,22 @@ export class SavedGamesManager {
 			engine.activateActors()
 
 			callback()
+		}
+	}
+
+	deleteGame(gameName: string, callback: { (): void }): void {
+		console.log("deleteGame")
+		
+		let objStore = this.db.transaction(["savedGames"], "readwrite").objectStore("savedGames")
+		let req = objStore.delete(gameName)
+		req.onsuccess = (event) => {
+			console.log("Game successfully deleted")
+			callback()
+		}
+
+		req.onerror = (event) => {
+			console.log("!! Could not delete game")
+			console.log(event)
 		}
 	}
 }

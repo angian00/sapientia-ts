@@ -3,7 +3,8 @@
 ## Next releases
 
 ### release 0.2
-- save/load/delete game UI
+- show save/load/delete game UI on accessing page
+- bugfixing: double turn after load
 
 ### release 0.3
 - quests

@@ -9,7 +9,7 @@ import { GameWorld } from "./world"
 import { MessageLog } from "./messageLog"
 import { BlockingQueue, removeFromList } from "../util"
 import { InputHandler, GameInputHandler } from "../ui/input_handlers"
-import { GameView, InventoryView } from "../ui/views"
+import { gameView } from "../ui/views"
 import { mapDefs, actorDefs } from "../loaders/map_loader"
 
 
@@ -24,8 +24,6 @@ export class Engine {
 	scheduler = new ROT.Scheduler.Simple()
 	playerActionQueue = new BlockingQueue<Action>()
 	fov = new ROT.FOV.PreciseShadowcasting(this.transparency.bind(this))
-	gameView = new GameView()
-	inventoryView = new InventoryView()
 	currEventListener?: { (e: KeyboardEvent): void }
 
 
@@ -110,10 +108,10 @@ export class Engine {
 		this.currMap.resetVisible()
 		this.fov.compute(this.player.x, this.player.y, lightRadius, this.setFov.bind(this))
 
-		this.gameView.renderMap(this.currMap)
-		this.gameView.renderMapInfo()
-		this.gameView.renderStats(this.player.stats)
-		this.gameView.renderMessages(this.messageLog)
+		gameView.renderMap(this.currMap)
+		gameView.renderMapInfo()
+		gameView.renderStats(this.player.stats)
+		gameView.renderMessages(this.messageLog)
 	}
 
 
@@ -149,7 +147,7 @@ export class Engine {
 
 		if ((xTiles >= 0 && xTiles < maxMapWidth && yTiles >= 0 && yTiles < maxMapHeight) &&
 			(this.currMap.visible[xTiles][yTiles]) ) {
-			this.gameView.renderMapInfo(this.currMap.getEntitiesAt(xTiles, yTiles))
+			gameView.renderMapInfo(this.currMap.getEntitiesAt(xTiles, yTiles))
 		}
 	}
 

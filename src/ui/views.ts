@@ -2,6 +2,7 @@ import * as ROT from "rot-js"
 
 import * as colors from "./colors"
 import { Entity, Actor, Item, Site } from "../game/entities"
+import { Engine } from "../game/engine"
 import { GameMap } from "../game/map"
 import { MessageLog } from "../game/messageLog"
 import { UnexploredTile } from "../game/terrain"
@@ -12,12 +13,19 @@ import { Dictionary } from "../util"
 import { maxMapWidth, maxMapHeight } from "../layout"
 
 
-let display: ROT.Display;
+let display: ROT.Display
 
-export class GameView {
+class GameView {
 	constructor() {
 		if (!display)
 			display = initDisplay()
+	}
+
+	renderAll(engine: Engine) {
+		this.renderMap(engine.currMap)
+		this.renderMapInfo()
+		this.renderStats(engine.player.stats)
+		this.renderMessages(engine.messageLog)
 	}
 
 	renderMap(map: GameMap, highlightedTile?: [number, number]): void {
@@ -173,7 +181,7 @@ function entities2tiles(w: number, h: number, entities: Set<Entity>): Entity[][]
 }
 
 
-export class InventoryView {
+class InventoryView {
 	render(inventory: Inventory, equipment: Equipment): Dictionary<Item> {
 		let itemMap: Dictionary<Item> = {}
 
@@ -208,10 +216,10 @@ export class InventoryView {
 				}
 
 				let newDiv = document.createElement("div")
-				newDiv.innerHTML = `<div class="inventory-row">` +
-						`<div class="inventory-item-letter">(${currLetter})</div>` +
-						`<div class="inventory-item-name">${nameStr}</div>` +
-						`<div class="inventory-item-command">${commandStr}</div>` +
+				newDiv.innerHTML = `<div class="dialog-row">` +
+						`<div class="dialog-item-letter">(${currLetter})</div>` +
+						`<div class="dialog-item-name">${nameStr}</div>` +
+						`<div class="dialog-item-command">${commandStr}</div>` +
 					`</div>`
 				container.appendChild(newDiv)
 					
@@ -223,3 +231,57 @@ export class InventoryView {
 		return itemMap
 	}
 }
+
+const NEW_SLOT_NAME = "[New Slot]"
+class SavedGamesView {
+	render(savedGames: { gameName: string, ts: number }[], forSaving=false): Dictionary<{ gameName: string, ts: number }> {
+		let savedGameMapping: Dictionary<{ gameName: string, ts: number }> = {}
+
+		let container = document.getElementById("savedGamesContent")
+		container.textContent = ""
+
+		if (forSaving)
+			savedGames.unshift({ gameName: NEW_SLOT_NAME, ts: null })
+
+		let currLetter = "a"
+		let currAscii = currLetter.charCodeAt(0)
+		for (let savedGame of savedGames) {
+			savedGameMapping[currLetter] = { gameName: savedGame.gameName, ts: savedGame.ts }
+
+			let nameStr = savedGame.gameName
+			let tsStr
+			let commandStr
+			if (savedGame.gameName == NEW_SLOT_NAME) {
+				tsStr = "&nbsp;"
+				commandStr = "(c)reate"
+			} else {
+				tsStr = `[${new Date(savedGame.ts).toLocaleString()}]`
+				if (forSaving)
+					commandStr = "(o)verwrite"
+				else
+					commandStr = "(l)oad"
+
+				commandStr += " / (d)elete"
+			}
+
+			let newDiv = document.createElement("div")
+			newDiv.innerHTML = `<div class="dialog-row">` +
+				`<div class="dialog-item-letter">(${currLetter})</div>` +
+				`<div class="dialog-item-name">${nameStr}</div>` +
+				`<div class="dialog-item-ts">${tsStr}</div>` +
+				`<div class="dialog-item-command">${commandStr}</div>` +
+				`</div>`
+			container.appendChild(newDiv)
+
+			currLetter = String.fromCharCode(currAscii + 1);
+			currAscii = currLetter.charCodeAt(0)
+		}
+
+		return savedGameMapping
+	}
+}
+
+export var gameView = new GameView()
+export var inventoryView = new InventoryView()
+export var savedGamesView = new SavedGamesView()
+

@@ -1,5 +1,6 @@
 
 import { Engine } from "./game/engine"
+import { gameView } from "./ui/views"
 import { loadAllData } from "./loaders/map_loader"
 import { SavedGamesManager } from "./loaders/game_persistence"
 
@@ -13,11 +14,12 @@ async function startGame() {
 
 	savedGames.getGameList( (gameList) => {
 		let gameName
-		if (gameList.length > 0) {
+		//if (gameList.length > 0) {
+		if (false) {
 			//TODO: dialog to choose saved game
 			console.log("games found")
 			console.log(gameList)
-			gameName = gameList[0]
+			gameName = gameList[0].gameName
 		}
 		
 		if (gameName) {
@@ -30,10 +32,7 @@ async function startGame() {
 }
 
 async function gameLoop() {
-	engine.gameView.renderMap(engine.currMap)
-	engine.gameView.renderMapInfo()
-	engine.gameView.renderStats(engine.player.stats)
-	engine.gameView.renderMessages(engine.messageLog)
+	gameView.renderAll(engine)
 
 	while (true) {
 		await engine.processTurn()

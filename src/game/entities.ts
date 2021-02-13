@@ -8,6 +8,7 @@ import { AI, PlayerAI } from "../components/ai"
 import { Consumable } from "../components/consumable"
 import { Equippable } from "../components/equippable"
 import { Combinable } from "../components/combinable"
+import { gameView } from "../ui/views"
 import * as colors from "../ui/colors"
 
 
@@ -110,7 +111,7 @@ export class Actor extends Entity {
 				let actionResult = a.perform()
 				if (!actionResult.success) {
 					this.engine.messageLog.addMessage(actionResult.reason!, "warning")
-					this.engine.gameView.renderMessages(this.engine.messageLog)
+					gameView.renderMessages(this.engine.messageLog)
 				}
 
 				//only monsters waste a turn on failed actions

@@ -239,29 +239,33 @@ h2 {
 }
 
 
-.inventory-item-name {
+.dialog-item-name {
 	margin-left: 10px;
 	margin-right: 10px;
 	text-align: left;
 	flex-grow: 99;
 }
 
-.inventory-row {
+.dialog-item-command {
+	margin-left: 50px;
+}
+
+.dialog-row {
 	padding: 5px;
 	display: flex;
 	flex-direction: row;
 	justify-content: space-between;
 }
 
-.inventory-row.selected {
+.dialog-row.selected {
 	border: 1px solid var(--default-dark-color)
 }
 
-.inventory-row.selected :first-child {
+.dialog-row.selected :first-child {
 	font-style: italic;
 	opacity: 50%;
 }
 
-.inventory-row:not(.selected) :last-child {
-	display: none;
+.dialog-row:not(.selected) :last-child {
+	opacity: 0%;
 }
