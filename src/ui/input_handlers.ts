@@ -103,8 +103,8 @@ export class GameInputHandler extends InputHandler {
 					let saveGameInputHandler = new SavedGamesInputHandler(engine, savedGamesMapping, true)
 					engine.setInputHandler(saveGameInputHandler)
 
-					document.getElementById("dialogContainer").style.display = "block";
-					document.getElementById("savedGamesDialog").style.display = "block";
+					document.getElementById("dialogContainer").style.display = "block"
+					document.getElementById("savedGamesDialog").style.display = "block"
 				})
 
 			} else if (keyCode == "KeyL") {
@@ -115,8 +115,8 @@ export class GameInputHandler extends InputHandler {
 					let loadGameInputHandler = new SavedGamesInputHandler(engine, savedGamesMapping)
 					engine.setInputHandler(loadGameInputHandler)
 
-					document.getElementById("dialogContainer").style.display = "block";
-					document.getElementById("savedGamesDialog").style.display = "block";
+					document.getElementById("dialogContainer").style.display = "block"
+					document.getElementById("savedGamesDialog").style.display = "block"
 				})
 			}
 		}
@@ -218,8 +218,8 @@ export class InventoryInputHandler extends InputHandler {
 		gameView.renderMap(engine.currMap)
 		gameView.renderStats(engine.player.stats)
 		gameView.renderMessages(engine.messageLog)
-		document.getElementById("dialogContainer").style.display = "none";
-		document.getElementById("inventoryDialog").style.display = "none";
+		document.getElementById("dialogContainer").style.display = "none"
+		document.getElementById("inventoryDialog").style.display = "none"
 	}
 }
 
@@ -259,7 +259,7 @@ export class SavedGamesInputHandler extends InputHandler {
 			}
 
 		} else {
-			if (this.selectedItem && (!this.selectedItem.ts) && keyCode == "KeyC") {
+			if (this.forSaving && this.selectedItem && (!this.selectedItem.ts) && keyCode == "KeyC") {
 				let newSaveName
 				while (!actionOk) {
 					newSaveName = prompt("Enter a name for the new save", "New Save")
@@ -283,13 +283,23 @@ export class SavedGamesInputHandler extends InputHandler {
 				if (newSaveName)
 					savedGames.saveGame(newSaveName, engine, () => { alert(`Game saved`) })
 
+			} else if ((!this.forSaving) && this.selectedItem && (!this.selectedItem.ts) && keyCode == "KeyN") {
+				engine.stopGameLoop()
+				engine.newGame()
+				engine.startGameLoop()
+				actionOk = true
+
 			} else if (this.selectedItem && this.selectedItem.ts) {
 				if (this.forSaving && keyCode == "KeyO") {
 					savedGames.saveGame(this.selectedItem.gameName, engine, () => { alert(`Game saved`) })
 					actionOk = true
 
 				} else if ((!this.forSaving) && keyCode == "KeyL") {
-					savedGames.loadGame(this.selectedItem.gameName, engine, () => { gameView.renderAll(engine) })
+					engine.stopGameLoop()
+					savedGames.loadGame(this.selectedItem.gameName, engine, () => { 
+						gameView.renderAll(engine)
+						engine.startGameLoop()
+					})
 					actionOk = true
 
 				} else if (keyCode == "KeyD") {

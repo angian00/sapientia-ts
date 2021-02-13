@@ -1,6 +1,7 @@
 
 import { Engine } from "./game/engine"
-import { gameView } from "./ui/views"
+import { gameView, savedGamesView } from "./ui/views"
+import { SavedGamesInputHandler } from "./ui/input_handlers"
 import { loadAllData } from "./loaders/map_loader"
 import { SavedGamesManager } from "./loaders/game_persistence"
 
@@ -13,30 +14,19 @@ async function startGame() {
 	engine = new Engine()
 
 	savedGames.getGameList( (gameList) => {
-		let gameName
-		//if (gameList.length > 0) {
-		if (false) {
-			//TODO: dialog to choose saved game
-			console.log("games found")
-			console.log(gameList)
-			gameName = gameList[0].gameName
-		}
-		
-		if (gameName) {
-			savedGames.loadGame(gameName, engine, gameLoop)
+		if (gameList.length > 0) {
+			let savedGamesMapping = savedGamesView.render(gameList)
+			let loadGameInputHandler = new SavedGamesInputHandler(engine, savedGamesMapping)
+			engine.setInputHandler(loadGameInputHandler)
+
+			document.getElementById("dialogContainer").style.display = "block"
+			document.getElementById("savedGamesDialog").style.display = "block"
+
 		} else {
 			engine.newGame()
-			gameLoop()
+			engine.startGameLoop()
 		}
 	})
-}
-
-async function gameLoop() {
-	gameView.renderAll(engine)
-
-	while (true) {
-		await engine.processTurn()
-	}
 }
 
 function isMobileBrowser(): boolean {

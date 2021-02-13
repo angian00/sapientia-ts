@@ -3,8 +3,9 @@
 ## Next releases
 
 ### release 0.2
-- show save/load/delete game UI on accessing page
+- fix newgame (reload all)
 - bugfixing: double turn after load
+- fill in howto with commands
 
 ### release 0.3
 - quests
@@ -19,6 +20,8 @@
 ### Improvements
 - inventory interaction
 	- "combine" command interface
+- save/load game:
+	direct command for "new" slot
 
 # Macro Features
 - loaders

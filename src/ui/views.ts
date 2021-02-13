@@ -232,7 +232,7 @@ class InventoryView {
 	}
 }
 
-const NEW_SLOT_NAME = "[New Slot]"
+const NEW_SLOT_NAME = "[New]"
 class SavedGamesView {
 	render(savedGames: { gameName: string, ts: number }[], forSaving=false): Dictionary<{ gameName: string, ts: number }> {
 		let savedGameMapping: Dictionary<{ gameName: string, ts: number }> = {}
@@ -240,8 +240,7 @@ class SavedGamesView {
 		let container = document.getElementById("savedGamesContent")
 		container.textContent = ""
 
-		if (forSaving)
-			savedGames.unshift({ gameName: NEW_SLOT_NAME, ts: null })
+		savedGames.unshift({ gameName: NEW_SLOT_NAME, ts: null })
 
 		let currLetter = "a"
 		let currAscii = currLetter.charCodeAt(0)
@@ -253,7 +252,11 @@ class SavedGamesView {
 			let commandStr
 			if (savedGame.gameName == NEW_SLOT_NAME) {
 				tsStr = "&nbsp;"
-				commandStr = "(c)reate"
+				if (forSaving)
+					commandStr = "(c)reate"
+				else
+					commandStr = "(n)ew game"
+					
 			} else {
 				tsStr = `[${new Date(savedGame.ts).toLocaleString()}]`
 				if (forSaving)

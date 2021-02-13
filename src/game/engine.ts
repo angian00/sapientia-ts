@@ -16,6 +16,7 @@ import { mapDefs, actorDefs } from "../loaders/map_loader"
 export class Engine {
 	currMap: GameMap
 	world: GameWorld
+	private isGameActive = false
 
 	actors: Actor[] = []
 	player: Actor
@@ -73,8 +74,23 @@ export class Engine {
 		this.fov.compute(this.player.x, this.player.y, lightRadius, this.setFov.bind(this))
 
 		this.messageLog.addMessage("Welcome, adventurer!")
+
+		gameView.renderAll(this)
 	}
 
+
+	async startGameLoop(): Promise<void> {
+		this.isGameActive = true
+
+		while (this.isGameActive) {
+			await this.processTurn()
+		}
+	}
+	
+	stopGameLoop() {
+		this.isGameActive = false
+		this.deactivateActors()
+	}
 
 	removeActor(actor: Actor): void {
 		this.currMap.entities.delete(actor)
@@ -97,7 +113,7 @@ export class Engine {
 	}
 
 	async processTurn(): Promise<void> {
-		//console.log("processTurn")
+		console.log("processTurn")
 
 		let currActor = <Actor>this.scheduler.next()
 		if (!currActor)
