@@ -238,7 +238,7 @@ export class SavedGamesInputHandler extends InputHandler {
 			return null
 	}
 
-	handleEvent(e: KeyboardEvent): void {
+	async handleEvent(e: KeyboardEvent) {
 		let engine = this.engine
 
 		let actionOk = false
@@ -253,6 +253,7 @@ export class SavedGamesInputHandler extends InputHandler {
 				this.selectedItemKey = e.key
 				if (this.selectedItem.ts) {
 					this.setSelectedRow()
+
 				} else  {
 					if (this.forSaving) {
 						// Save in new slot
@@ -282,12 +283,11 @@ export class SavedGamesInputHandler extends InputHandler {
 					} else {
 						// Start new game
 						engine.stopGameLoop()
-						engine.newGame()
+						await engine.newGame()
 						engine.startGameLoop()
 						actionOk = true
 					}
 				}
-				
 			}
 
 		} else {

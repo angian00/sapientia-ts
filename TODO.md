@@ -2,9 +2,6 @@
 
 ## Next releases
 
-### release 0.2
-- bugfixing: double turn after load
-
 ### release 0.3
 - quests
 	- scouting (morrowind or skyrim wikis)
@@ -18,8 +15,6 @@
 ### Improvements
 - inventory interaction
 	- "combine" command interface
-- save/load game:
-	direct command for "new" slot
 - resolve ambiguity in Inventory.getFromName
 
 # Macro Features

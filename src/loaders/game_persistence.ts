@@ -19,11 +19,10 @@ export class SavedGamesManager {
 
 	constructor() {
 		this.dbFactory = window.indexedDB
-		this.initDb()
 	}
 
-	private async initDb() {
-		this.db = await openDB(DB_NAME, null, {
+	private async connect() {
+		this.db = await openDB(DB_NAME, 1, {
 			upgrade(db, oldVersion, newVersion, transaction) {
 				this.db = db
 				this.db.createObjectStore("savedGames", { keyPath: "gameName" })
@@ -32,6 +31,9 @@ export class SavedGamesManager {
 	}
 
 	async getGameList(): Promise<{ gameName: string, ts: number }[]> {
+		if (!this.db)
+			await this.connect()
+
 		let gameList = new Array<{ gameName: string, ts: number }>()
 
 		return new Promise(async (resolve, reject) => {
@@ -49,6 +51,9 @@ export class SavedGamesManager {
 	}
 
 	async saveGame(gameName: string, engine: Engine) {
+		if (!this.db)
+			await this.connect()
+
 		console.log("saveGame")
 		let gameData = new GameData()
 
@@ -83,68 +88,82 @@ export class SavedGamesManager {
 			gameData.mapStack.push({map: mss.map.name, pos: mss.pos})
 		}
 
-		console.log(gameData)
+		//console.log(gameData)
 
 		let objStore = this.db.transaction(["savedGames"], "readwrite").objectStore("savedGames")
 		return objStore.put({ "gameName": gameName, "data": gameData, "ts": Date.now() })
 	}
 
 	
-	async loadGame(gameName: string, engine: Engine) {
+	async loadGame(gameName: string, engine: Engine): Promise<void> {
+		if (!this.db)
+			await this.connect()
+
 		console.log("loadGame")
 		await loadAllData()
 
 		let objStore = this.db.transaction(["savedGames"], "readonly").objectStore("savedGames")
-		objStore.get(gameName).then( (result) => {
-			console.log("Game data successfully retrieved")
-			let gameData = result.data
-			console.log(gameData)
+		return new Promise((resolve, reject) => {
+			objStore.get(gameName).then( (result) => {
+				console.log("Game data successfully retrieved")
+				let gameData = result.data
+				console.log(gameData)
 
-			engine.deactivateActors()
+				engine.deactivateActors()
 
-			// message log
-			engine.messageLog = MessageLog.fromObject(gameData.messageLog)
+				// message log
+				engine.messageLog = MessageLog.fromObject(gameData.messageLog)
 
-			// maps(visible, explored, entities)
-			for (let mapName in gameData.maps) {
-				engine.exploredMaps.add(mapName)
+				// maps(visible, explored, entities)
+				for (let mapName in gameData.maps) {
+					engine.exploredMaps.add(mapName)
 
-				let currMapData = gameData.maps[mapName]
-				let targetMap = mapDefs[mapName]
-				targetMap.visible = currMapData.visible
-				targetMap.explored = currMapData.explored
-				
-				targetMap.entities.clear()
-				for (let eData of currMapData.entities) {
-					let e = Entity.fromObject(eData)
+					let currMapData = gameData.maps[mapName]
+					let targetMap = mapDefs[mapName]
+					targetMap.visible = currMapData.visible
+					targetMap.explored = currMapData.explored
 					
-					if (e instanceof Actor) {
-						e.engine = engine
-						if (e.ai && e.ai instanceof PlayerAI)
-							engine.player = e
+					targetMap.entities.clear()
+					for (let eData of currMapData.entities) {
+						let e = Entity.fromObject(eData)
+						
+						if (e instanceof Actor) {
+							e.engine = engine
+							if (e.ai && e.ai instanceof PlayerAI)
+								engine.player = e
 
-					} else if (e instanceof Item) {
-						e.parent = targetMap
-					} else if (e instanceof Site) {
-						e.parent = targetMap
+						} else if (e instanceof Item) {
+							e.parent = targetMap
+						} else if (e instanceof Site) {
+							e.parent = targetMap
+						}
+
+						targetMap.entities.add(e)
+						
 					}
-
-					targetMap.entities.add(e)
-					
 				}
-			}
 
-			// map stack
-			for (let mss of gameData.mapStack) {
-				engine.world.mapStack.push({ map: mapDefs[mss.map], pos: mss.pos })
-			}
+				// map stack
+				for (let mss of gameData.mapStack) {
+					engine.world.mapStack.push({ map: mapDefs[mss.map], pos: mss.pos })
+				}
 
-			engine.currMap = engine.world.currMap
-			engine.activateActors()
+				engine.currMap = engine.world.currMap
+				engine.activateActors()
+
+				resolve()
+			}).catch(err => {
+				console.log("Error loading game data")
+				console.log(err)
+				reject(err)
+			})
 		})
 	}
 
 	async deleteGame(gameName: string) {
+		if (!this.db)
+			await this.connect()
+
 		console.log("deleteGame")
 		
 		let objStore = this.db.transaction(["savedGames"], "readwrite").objectStore("savedGames")

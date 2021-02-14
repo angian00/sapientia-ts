@@ -9,9 +9,9 @@ let engine: Engine
 
 async function startGame() {
 	engine = new Engine()
-	let savedGames = await new SavedGamesManager()
+	let savedGames = new SavedGamesManager()
 	let gameList = await savedGames.getGameList()
-	
+
 	if (gameList.length > 0) {
 		let savedGamesMapping = savedGamesView.render(gameList)
 		let loadGameInputHandler = new SavedGamesInputHandler(engine, savedGamesMapping)
