@@ -2,31 +2,28 @@
 import { Engine } from "./game/engine"
 import { gameView, savedGamesView } from "./ui/views"
 import { SavedGamesInputHandler } from "./ui/input_handlers"
-import { loadAllData } from "./loaders/map_loader"
 import { SavedGamesManager } from "./loaders/game_persistence"
 
 
-let savedGames = new SavedGamesManager()
 let engine: Engine
 
 async function startGame() {
-	await loadAllData()
 	engine = new Engine()
+	let savedGames = await new SavedGamesManager()
+	let gameList = await savedGames.getGameList()
+	
+	if (gameList.length > 0) {
+		let savedGamesMapping = savedGamesView.render(gameList)
+		let loadGameInputHandler = new SavedGamesInputHandler(engine, savedGamesMapping)
+		engine.setInputHandler(loadGameInputHandler)
 
-	savedGames.getGameList( (gameList) => {
-		if (gameList.length > 0) {
-			let savedGamesMapping = savedGamesView.render(gameList)
-			let loadGameInputHandler = new SavedGamesInputHandler(engine, savedGamesMapping)
-			engine.setInputHandler(loadGameInputHandler)
+		document.getElementById("dialogContainer").style.display = "block"
+		document.getElementById("savedGamesDialog").style.display = "block"
 
-			document.getElementById("dialogContainer").style.display = "block"
-			document.getElementById("savedGamesDialog").style.display = "block"
-
-		} else {
-			engine.newGame()
-			engine.startGameLoop()
-		}
-	})
+	} else {
+		engine.newGame()
+		engine.startGameLoop()
+	}
 }
 
 function isMobileBrowser(): boolean {

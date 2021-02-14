@@ -29,7 +29,7 @@ export class GameInputHandler extends InputHandler {
 	tileSelection?: [number, number]
 
 
-	handleEvent(e: KeyboardEvent): void {
+	async handleEvent(e: KeyboardEvent) {
 		let engine = this.engine
 
 		let newAction = null
@@ -98,26 +98,24 @@ export class GameInputHandler extends InputHandler {
 			*/
 
 			} else if (keyCode == "KeyS") {
-				savedGames.getGameList(gameList => {
-					let savedGamesMapping = savedGamesView.render(gameList, true)
-					let saveGameInputHandler = new SavedGamesInputHandler(engine, savedGamesMapping, true)
-					engine.setInputHandler(saveGameInputHandler)
+				let gameList = await savedGames.getGameList()
+				let savedGamesMapping = savedGamesView.render(gameList, true)
+				let saveGameInputHandler = new SavedGamesInputHandler(engine, savedGamesMapping, true)
+				engine.setInputHandler(saveGameInputHandler)
 
-					document.getElementById("dialogContainer").style.display = "block"
-					document.getElementById("savedGamesDialog").style.display = "block"
-				})
+				document.getElementById("dialogContainer").style.display = "block"
+				document.getElementById("savedGamesDialog").style.display = "block"
 
 			} else if (keyCode == "KeyL") {
 				//this.savedGames.saveGame("prova", engine, 
 				//	() => { alert(`Game saved`) })
-				savedGames.getGameList(gameList => {
-					let savedGamesMapping = savedGamesView.render(gameList)
-					let loadGameInputHandler = new SavedGamesInputHandler(engine, savedGamesMapping)
-					engine.setInputHandler(loadGameInputHandler)
+				let gameList = await savedGames.getGameList()
+				let savedGamesMapping = savedGamesView.render(gameList)
+				let loadGameInputHandler = new SavedGamesInputHandler(engine, savedGamesMapping)
+				engine.setInputHandler(loadGameInputHandler)
 
-					document.getElementById("dialogContainer").style.display = "block"
-					document.getElementById("savedGamesDialog").style.display = "block"
-				})
+				document.getElementById("dialogContainer").style.display = "block"
+				document.getElementById("savedGamesDialog").style.display = "block"
 			}
 		}
 
@@ -215,9 +213,7 @@ export class InventoryInputHandler extends InputHandler {
 		
 		engine.setInputHandler(new GameInputHandler(engine))
 
-		gameView.renderMap(engine.currMap)
-		gameView.renderStats(engine.player.stats)
-		gameView.renderMessages(engine.messageLog)
+		gameView.renderAll(engine)
 		document.getElementById("dialogContainer").style.display = "none"
 		document.getElementById("inventoryDialog").style.display = "none"
 	}
@@ -255,57 +251,61 @@ export class SavedGamesInputHandler extends InputHandler {
 		} else if (!this.selectedItemKey) {
 			if (e.key in this.savedGamesMapping) {
 				this.selectedItemKey = e.key
-				this.setSelectedRow()
+				if (this.selectedItem.ts) {
+					this.setSelectedRow()
+				} else  {
+					if (this.forSaving) {
+						// Save in new slot
+						let newSaveName
+						while (!actionOk) {
+							newSaveName = prompt("Enter a name for the new save", "New Save")
+							if (!newSaveName) {
+								//Cancel pressed in prompt dialog: cancel new save
+								break
+							}
+
+							//check that the new name is not already in use
+							actionOk = true
+							for (let k in this.savedGamesMapping) {
+								let savedGameName = this.savedGamesMapping[k].gameName
+								if (newSaveName == savedGameName) {
+									actionOk = false
+									alert("A save with this name already exists")
+									break
+								}
+							}
+						}
+
+						if (newSaveName)
+							savedGames.saveGame(newSaveName, engine).then(() => { alert(`Game saved`) })
+					
+					} else {
+						// Start new game
+						engine.stopGameLoop()
+						engine.newGame()
+						engine.startGameLoop()
+						actionOk = true
+					}
+				}
+				
 			}
 
 		} else {
-			if (this.forSaving && this.selectedItem && (!this.selectedItem.ts) && keyCode == "KeyC") {
-				let newSaveName
-				while (!actionOk) {
-					newSaveName = prompt("Enter a name for the new save", "New Save")
-					if (!newSaveName) {
-						//Cancel pressed in prompt dialog: cancel new save
-						break
-					}
-
-					//check that the new name is not already in use
-					actionOk = true
-					for (let k in this.savedGamesMapping) {
-						let savedGameName = this.savedGamesMapping[k].gameName
-						if (newSaveName == savedGameName) {
-							actionOk = false
-							alert("A save with this name already exists")
-							break
-						}
-					}
-				}
-
-				if (newSaveName)
-					savedGames.saveGame(newSaveName, engine, () => { alert(`Game saved`) })
-
-			} else if ((!this.forSaving) && this.selectedItem && (!this.selectedItem.ts) && keyCode == "KeyN") {
-				engine.stopGameLoop()
-				engine.newGame()
-				engine.startGameLoop()
+			if (this.forSaving && keyCode == "KeyO") {
+				savedGames.saveGame(this.selectedItem.gameName, engine).then(() => { alert(`Game saved`) })
 				actionOk = true
 
-			} else if (this.selectedItem && this.selectedItem.ts) {
-				if (this.forSaving && keyCode == "KeyO") {
-					savedGames.saveGame(this.selectedItem.gameName, engine, () => { alert(`Game saved`) })
-					actionOk = true
+			} else if ((!this.forSaving) && keyCode == "KeyL") {
+				engine.stopGameLoop()
+				savedGames.loadGame(this.selectedItem.gameName, engine).then(() => { 
+					gameView.renderAll(engine)
+					engine.startGameLoop()
+				})
+				actionOk = true
 
-				} else if ((!this.forSaving) && keyCode == "KeyL") {
-					engine.stopGameLoop()
-					savedGames.loadGame(this.selectedItem.gameName, engine, () => { 
-						gameView.renderAll(engine)
-						engine.startGameLoop()
-					})
-					actionOk = true
-
-				} else if (keyCode == "KeyD") {
-					savedGames.deleteGame(this.selectedItem.gameName, () => { alert(`Game deleted`) })
-					actionOk = true
-				}
+			} else if (keyCode == "KeyD") {
+				savedGames.deleteGame(this.selectedItem.gameName).then(() => { alert(`Game deleted`) })
+				actionOk = true
 			}
 		}
 
@@ -336,9 +336,7 @@ export class SavedGamesInputHandler extends InputHandler {
 
 		engine.setInputHandler(new GameInputHandler(engine))
 
-		gameView.renderMap(engine.currMap)
-		gameView.renderStats(engine.player.stats)
-		gameView.renderMessages(engine.messageLog)
+		gameView.renderAll(engine)
 		document.getElementById("dialogContainer").style.display = "none";
 		document.getElementById("savedGamesDialog").style.display = "none";
 	}

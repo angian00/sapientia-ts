@@ -4,7 +4,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 ## Unreleased
 ### Added
 - game saving/loading
-
+- added commands to howto
 
 ## [0.1.3] - 2021-02-11
 ### Fixed

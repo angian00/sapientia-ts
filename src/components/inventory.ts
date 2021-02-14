@@ -14,7 +14,17 @@ export class Inventory {
 		this.parent = parent
 		this.capacity = capacity
 	}
-		
+	
+	/** Needed to avoid duplication when deserializing from multiple references */
+	getEqualItem(item: Item): Item {
+		for (let currItem of this.items) {
+			if (item == currItem)
+				return currItem
+		}
+
+		return null
+	}
+
 	/** Removes an item from the inventory and restores it to the game map, at the player's current location */
 	drop(item: Item): void {
 		this.items.delete(item)

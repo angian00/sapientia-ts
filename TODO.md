@@ -3,9 +3,7 @@
 ## Next releases
 
 ### release 0.2
-- fix newgame (reload all)
 - bugfixing: double turn after load
-- fill in howto with commands
 
 ### release 0.3
 - quests
@@ -22,6 +20,7 @@
 	- "combine" command interface
 - save/load game:
 	direct command for "new" slot
+- resolve ambiguity in Inventory.getFromName
 
 # Macro Features
 - loaders

@@ -10,7 +10,7 @@ import { MessageLog } from "./messageLog"
 import { BlockingQueue, removeFromList } from "../util"
 import { InputHandler, GameInputHandler } from "../ui/input_handlers"
 import { gameView } from "../ui/views"
-import { mapDefs, actorDefs } from "../loaders/map_loader"
+import { mapDefs, actorDefs, loadAllData } from "../loaders/map_loader"
 
 
 export class Engine {
@@ -36,7 +36,9 @@ export class Engine {
 		this.world = new GameWorld(this)
 	}
 
-	newGame(): void {
+	async newGame() {
+		await loadAllData()
+
 		this.player = actorDefs["player"].clone()
 		this.player.engine = this
 

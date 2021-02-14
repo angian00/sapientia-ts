@@ -210,7 +210,7 @@ export class Actor extends Entity {
 		}
 
 		if (obj.equipment) {
-			newActor.equipment = Equipment.fromObject(obj.equipment)
+			newActor.equipment = Equipment.fromObject(obj.equipment, newActor.inventory)
 			newActor.equipment.parent = newActor
 		}
 

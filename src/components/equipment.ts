@@ -1,5 +1,6 @@
 import { Engine } from "../game/engine"
 import { Actor, Item } from "../game/entities"
+import { Inventory } from "./inventory"
 import { Dictionary } from "../util"
 
 export enum EquipmentType {
@@ -117,10 +118,10 @@ export class Equipment {
 		return itemObjs
 	}
 
-	static fromObject(obj: any): Equipment {
+	static fromObject(obj: any, inventory: Inventory): Equipment {
 		let newEquipment = new Equipment(null, null)
 		for (let k in obj) {
-			newEquipment.items[k] = Item.fromObject(obj[k])
+			newEquipment.items[k] =	inventory.getEqualItem(Item.fromObject(obj[k]))
 		}
 
 		return newEquipment

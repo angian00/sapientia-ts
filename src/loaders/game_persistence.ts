@@ -3,7 +3,9 @@ import { Engine } from "../game/engine"
 import { Entity, Actor, Item, Site } from "../game/entities"
 import { MessageLog } from "../game/messageLog"
 import { Dictionary } from "../util"
-import { mapDefs } from "./map_loader"
+import { mapDefs, loadAllData } from "./map_loader"
+
+import { openDB, IDBPDatabase } from "idb"
 
 
 const DB_NAME = "sapientia-db"
@@ -12,7 +14,7 @@ const MAX_LAST_MESSAGES = 10
 
 export class SavedGamesManager {
 	private dbFactory: IDBFactory
-	private db: IDBDatabase
+	private db: IDBPDatabase
 
 
 	constructor() {
@@ -20,56 +22,33 @@ export class SavedGamesManager {
 		this.initDb()
 	}
 
-	private initDb(): void {
-		let req: IDBOpenDBRequest
-
-		req = this.dbFactory.open(DB_NAME)
-		req.onerror = (event) => {
-			console.log(`!! Could not open IndexedDB [${DB_NAME}]: ${event}`)	
-		}
-
-		req.onupgradeneeded = this.onUpgradeNeeded.bind(this)
-		req.onsuccess = this.onOpenSuccess.bind(this)
+	private async initDb() {
+		this.db = await openDB(DB_NAME, null, {
+			upgrade(db, oldVersion, newVersion, transaction) {
+				this.db = db
+				this.db.createObjectStore("savedGames", { keyPath: "gameName" })
+			},
+		})
 	}
 
-	private onOpenSuccess(e: any) {
-		this.db = e.target.result
-	}
-
-	private onUpgradeNeeded(e: any) {
-		this.db = e.target.result
-		this.addTables()
-	}
-
-	private addTables(): void {
-		this.db.createObjectStore("savedGames", { keyPath: "gameName" })
-	}
-
-	private resetDb(): void {
-		this.db.close()
-		this.dbFactory.deleteDatabase(DB_NAME)
-		this.initDb()
-	}
-
-	getGameList(callback: { (savedGames: { gameName: string, ts: number }[]): void }): void {
+	async getGameList(): Promise<{ gameName: string, ts: number }[]> {
 		let gameList = new Array<{ gameName: string, ts: number }>()
 
-		let objStore = this.db.transaction(["savedGames"], "readwrite").objectStore("savedGames")
-		let req = objStore.openCursor()
-		req.onsuccess = (event) => {
-			let cursor = req.result
-			if (cursor) {
+		return new Promise(async (resolve, reject) => {
+			let objStore = this.db.transaction(["savedGames"], "readwrite").objectStore("savedGames")
+			let cursor = await objStore.openCursor()
+			while (cursor) {
 				gameList.push({ gameName: cursor.value.gameName, ts: cursor.value.ts })
-				cursor.continue()
-			} else {
-				//sort by ts desc
-				gameList.sort((a, b) => (a.ts < b.ts) ? 1 : ((a.ts > b.ts) ? -1 : 0))
-				callback(gameList)
+				cursor = await cursor.continue()
 			}
-		}
+
+			//sort by ts desc
+			gameList.sort((a, b) => (a.ts < b.ts) ? 1 : ((a.ts > b.ts) ? -1 : 0))
+			resolve(gameList)
+		})
 	}
 
-	saveGame(gameName: string, engine: Engine, callback: {(): void }): void {
+	async saveGame(gameName: string, engine: Engine) {
 		console.log("saveGame")
 		let gameData = new GameData()
 
@@ -107,31 +86,18 @@ export class SavedGamesManager {
 		console.log(gameData)
 
 		let objStore = this.db.transaction(["savedGames"], "readwrite").objectStore("savedGames")
-		let req = objStore.put({ "gameName": gameName, "data": gameData, "ts": Date.now() })
-		req.onsuccess = (event) => {
-			console.log("Game successfully saved!")
-			callback()
-		}
-
-		req.onerror = (event) => {
-			console.log("!! Could not save game")
-			console.log(event)
-		}
+		return objStore.put({ "gameName": gameName, "data": gameData, "ts": Date.now() })
 	}
 
-	loadGame(gameName: string, engine: Engine, callback: { (): void }): void {
+	
+	async loadGame(gameName: string, engine: Engine) {
 		console.log("loadGame")
+		await loadAllData()
 
 		let objStore = this.db.transaction(["savedGames"], "readonly").objectStore("savedGames")
-		let req = objStore.get(gameName)
-		req.onerror = (event) => {
-			console.log("!! Could not load game")
-			console.log(event)
-		}
-
-		req.onsuccess = (event) => {
+		objStore.get(gameName).then( (result) => {
 			console.log("Game data successfully retrieved")
-			let gameData = req.result.data
+			let gameData = result.data
 			console.log(gameData)
 
 			engine.deactivateActors()
@@ -175,25 +141,14 @@ export class SavedGamesManager {
 
 			engine.currMap = engine.world.currMap
 			engine.activateActors()
-
-			callback()
-		}
+		})
 	}
 
-	deleteGame(gameName: string, callback: { (): void }): void {
+	async deleteGame(gameName: string) {
 		console.log("deleteGame")
 		
 		let objStore = this.db.transaction(["savedGames"], "readwrite").objectStore("savedGames")
-		let req = objStore.delete(gameName)
-		req.onsuccess = (event) => {
-			console.log("Game successfully deleted")
-			callback()
-		}
-
-		req.onerror = (event) => {
-			console.log("!! Could not delete game")
-			console.log(event)
-		}
+		return objStore.delete(gameName)
 	}
 }
 

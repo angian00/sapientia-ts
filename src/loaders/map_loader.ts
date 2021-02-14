@@ -12,8 +12,8 @@ import { PlayerAI, EnemyAI } from "../components/ai"
 const dataDir = "./data"
 
 export var terrainDefs: Dictionary<Terrain>
-export var mapDefs = new Dictionary<GameMap>()
-export var actorDefs = new Dictionary<Actor>()
+export var mapDefs: Dictionary<GameMap>
+export var actorDefs: Dictionary<Actor>
 
 enum DataType {
 	TerrainDef,
@@ -23,6 +23,8 @@ enum DataType {
 
 export async function loadAllData(): Promise<any> {
 	terrainDefs = await loadData("terrains.txt", DataType.TerrainDef)
+	mapDefs = new Dictionary<GameMap>()
+	actorDefs = new Dictionary<Actor>()
 
 	const actorFiles = ["monsters.json"]
 	let actorPromises: Promise<void>[] = []

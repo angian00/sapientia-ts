@@ -24,11 +24,15 @@ class GameView {
 	renderAll(engine: Engine) {
 		this.renderMap(engine.currMap)
 		this.renderMapInfo()
-		this.renderStats(engine.player.stats)
+		if (engine.player)
+			this.renderStats(engine.player.stats)
 		this.renderMessages(engine.messageLog)
 	}
 
 	renderMap(map: GameMap, highlightedTile?: [number, number]): void {
+		if (!map)
+			return
+
 		//console.log("rendering map")
 		document.getElementById("mapLabel").textContent = map.label
 
@@ -118,6 +122,9 @@ class GameView {
 	}
 
 	renderMessages(messageLog: MessageLog): void {
+		if (!messageLog)
+			return
+
 		//console.log("rendering messages")
 		let container = document.getElementById("gameMessages")
 
@@ -135,6 +142,8 @@ class GameView {
 
 	renderStats(stats: Stats): void {
 		//console.log("rendering stats")
+		if (!stats)
+			return
 
 		let elem = document.getElementById("statHp")
 		elem.textContent = `hp: ${stats.hp} / ${stats.maxHp}`
@@ -256,7 +265,7 @@ class SavedGamesView {
 					commandStr = "(c)reate"
 				else
 					commandStr = "(n)ew game"
-					
+
 			} else {
 				tsStr = `[${new Date(savedGame.ts).toLocaleString()}]`
 				if (forSaving)
