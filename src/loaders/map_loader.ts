@@ -5,8 +5,10 @@ import { Engine } from "../game/engine"
 import { Dictionary } from "../util"
 import { Stats } from "../components/stats"
 import { Inventory } from "../components/inventory"
-import { Equipment } from "../components/equipment"
+import { Equipment, EquipmentType } from "../components/equipment"
 import { PlayerAI, EnemyAI } from "../components/ai"
+import { Equippable } from "../components/equippable"
+import { Combinable } from "../components/combinable"
 
 
 const dataDir = "./data"
@@ -14,33 +16,39 @@ const dataDir = "./data"
 export var terrainDefs: Dictionary<Terrain>
 export var mapDefs: Dictionary<GameMap>
 export var actorDefs: Dictionary<Actor>
+export var itemDefs: Dictionary<Item>
 
 enum DataType {
 	TerrainDef,
 	Map,
 	Actor,
+	Item,
 }
 
 export async function loadAllData(): Promise<any> {
 	terrainDefs = await loadData("terrains.txt", DataType.TerrainDef)
 	mapDefs = new Dictionary<GameMap>()
 	actorDefs = new Dictionary<Actor>()
+	itemDefs = new Dictionary<Item>()
 
 	const actorFiles = ["monsters.json"]
-	let actorPromises: Promise<void>[] = []
+	const itemFiles = ["items.json"]
+	let defPromises: Promise<void>[] = []
 
 	for (let f of actorFiles)
-		actorPromises.push(loadData(f, DataType.Actor))
+		defPromises.push(loadData(f, DataType.Actor))
+	for (let f of itemFiles)
+		defPromises.push(loadData(f, DataType.Item))
 
-	await actorPromises
+	await Promise.all(defPromises)
 
 	const mapFiles = [ "test_map_world.txt", "test_map_milano.txt" ]
-	let promises: Promise<void>[] = []
+	let mapPromises: Promise<void>[] = []
 
 	for (let f of mapFiles)
-		promises.push(loadData(f, DataType.Map))
+		mapPromises.push(loadData(f, DataType.Map))
 	
-	return Promise.all(promises)
+	return Promise.all(mapPromises)
 }
 
 
@@ -57,6 +65,9 @@ export async function loadData(filename: string, dataType: DataType): Promise<an
 			break
 		case DataType.Actor:
 			parseFunction = parseActorDef
+			break
+		case DataType.Item:
+			parseFunction = parseItemDef
 			break
 		default:
 			parseFunction = null
@@ -306,6 +317,32 @@ function parseActorDef(text: string): void {
 			actor.ai = new EnemyAI(engine, actor)
 
 		actorDefs[actor.name] = actor
+	}
+}
+
+
+function parseItemDef(text: string): void {
+	let engine: Engine = null
+	var dataObj = JSON.parse(text)
+
+	for (let dataItem of dataObj) {
+		//TODO: add validation
+		let item = new Item(dataItem.name, dataItem.char, dataItem.color)
+
+		//TODO: consumable
+
+		if (dataItem.equippable) {
+			item.equippable = new Equippable(engine, item, 
+				dataItem.equippable.equipmentType, 
+				+dataItem.equippable.bonusAtt, 
+				+dataItem.equippable.bonusDef)
+		}
+
+		if (dataItem.combinable) {
+			item.combinable = new Combinable(engine, item)
+		}
+
+		itemDefs[item.name] = item
 	}
 }
 

@@ -1,0 +1,45 @@
+Abrotano|Artemisia abrotanum
+Agrimonia|Agrimonia eupatoria
+Altea|Althaea officinalis
+Ambrosia|Ambrosia marittima
+Aneto|Anethum graveolens
+Asaro|Asarum aeuropeum
+Balsamita|Chrysanthemun balsamita
+Bardana|Arctium lappa
+Betonica|Stachys officinalis
+Blito|Amarantus blitum
+Cardo dei lanaioli|Dipsacus fullonum
+Catapuzia|Euphorbia cathyris
+Centaurea minore|Erythraea Centaurium
+Cerfoglio|Anthriscus cerefolium
+Coloquintide|Citrullus colocynthis
+Coriandolo|Coriandrum sativum
+Cumino|Carum carvi
+Dittamo|Dictamnus albus
+Dolico d'Egitto|Dolichos lablab
+Dragoncello|Artemisia dracunculus
+Fieno Greco|Trigonella foenum greacum
+Giaggiolo|Iris florentina
+Giglio|Lilium
+Levistico|Levisticum officinale
+Macerone|Smyrnium olusatrum
+Marrobio|Marrubium
+Morbidelli|Valerianella olitoria
+Nasturzio|Nasturtium officinalis
+Nepeta|Nepeta cataria
+Nigella|Nigella sativa
+Papavero|Papaver rhoeas
+Pastinaca|Pastinaca sativa
+Robbia|Rubbia tinctorum
+Rucola|Eruca sativa
+Ruta|Ruta graveolens
+Sabina|Juniperus sabina
+Salvia|Salvia officinalis
+Santoreggia|Satureja montana
+Saponaria|Saponaria officinalis
+Scilla|Urginea marittima
+Sclarea|Salvia sclarea
+Senape|Sinapis
+Seseli|Seseli tortuosum
+Tanaceto|Tanacetum vulgare
+Visnaga|Ammi visnaga

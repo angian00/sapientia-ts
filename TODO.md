@@ -1,10 +1,12 @@
 # TODO
 
 ## Next releases
+### release 0.2.1
+- item loader
+- items without definition (ex. corpses)
 
-### release 0.3
+### release 0.2.2
 - quests
-	- scouting (morrowind or skyrim wikis)
 	- state machine
 	- loader
 	- ? event notification/scripting

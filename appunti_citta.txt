@@ -1,0 +1,54 @@
+## "La città medievale" di Jacques LeGoff
+
+gruppo edilizio episcopale: cattedrale, battistero, palazzo del vescovo
+
+Più della metà delle città “importanti” oscillano tra le dieci e le ventimila anime.
+Stime verosimili attribuiscono 100.000 abitanti a Firenze e a Venezia, 80.000 a Milano, 60.000 a Bologna e Genova, 50.000 a Siena e Palermo.
+
+A Parigi, il Livre des Métiers, annovera centotrenta professioni regolamentate, di cui diciotto nell’alimentazione, ventidue nella lavorazione dei metalli, ventidue nel tessile e nel cuoio, trentasei nell’abbigliamento e così via.
+
+mercati
+fiere
+
+monete: lombardi, cambiavalute, banchieri
+
+
+i domenicani si insediano soprattutto nelle grosse città di almeno 5.000 abitanti, i france- scani anche nelle città piccole e nelle borgate
+le città vedono sorgere uno, due, tre, anche quattro conventi mendicanti. In base al loro numero, si potrebbe addirittura stabilire un criterio di gerarchia delle città.
+
+gli studenti sono chierici che hanno ricevuto gli ordini minori.
+
+
+
+## Libri
+G. Fanelli, Firenze [Rome and Bari, 1980, seventh edn. 2002]
+
+The Renaissance Palace in Florence 1st Edition
+by James R. Lindow (Author)
+
+
+
+## Idee
+-> libri storia firenze
+-> procedural generation araldica
+-> procedural generation ritratto persona (con livrea araldica)
+
+-> procedural generation nuclei familiari città (senza mappa)
+-> studiare modello a grafo influenze (librerie: igraph, graph-tool)
+	- singola dimensione:
+		- statico; rappresentazione visuale
+		- dinamico: eventi casuali; animazione
+
+-> procedural generation palazzi
+	palazzo Antinori
+	palazzo Corsini in Parione
+	palazzo Gondi
+	palazzo Medici-Tornaquinci
+	palazzo Rucellai
+	palazzo Guicciardini
+	palazzo Frescobaldi
+	palazzo Pandolfini
+	palazzo Capponi delle Rovinate
+	palazzo Ginori
+
+
